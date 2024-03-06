@@ -9,7 +9,6 @@ const createDatabaseClient = async () => {
     password: "postgres",
   });
 
-  await db.connect();
   return db;
 };
 
