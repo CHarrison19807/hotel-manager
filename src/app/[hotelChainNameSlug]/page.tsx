@@ -1,7 +1,7 @@
 import CreateNew from "@/components/CreateNewItem";
 import HotelItem from "@/components/HotelItem";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getHotels, getSingleHotel } from "@/lib/hotel";
+import { getHotel, getSingleHotel } from "@/lib/hotel";
 import { getSingleHotelChain } from "@/lib/hotelChain";
 import { hotel } from "@/lib/utils";
 import { notFound } from "next/navigation";
@@ -14,7 +14,7 @@ interface HotelChainProps {
 
 const HotelChainPage = async ({ params }: HotelChainProps) => {
   const { hotelChainNameSlug } = params;
-  const hotels = await getHotels(hotelChainNameSlug);
+  const hotels = await getHotel(hotelChainNameSlug);
   const hotelChain = await getSingleHotelChain(hotelChainNameSlug);
 
   if (!hotels || !hotelChain) {
@@ -31,7 +31,7 @@ const HotelChainPage = async ({ params }: HotelChainProps) => {
         </h1>
         <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6  ">
           <CreateNew
-            href={`/${hotelChainName}/new`}
+            href={`/${hotelChainNameSlug}/new`}
             cta={`Create a New Hotel in ${hotelChainName}`}
             description="Click the button above to create a new hotel!"
           />
