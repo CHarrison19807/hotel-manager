@@ -16,11 +16,12 @@ import { useEmployeeContext } from "@/contexts/EmployeeContext";
 interface CreateNewProps {
   cta: string;
   description: string;
+  href: string;
 }
 
 const CreateNew = (props: CreateNewProps) => {
   const { isEmployee } = useEmployeeContext();
-  const { cta, description } = props;
+  const { cta, description, href } = props;
   if (isEmployee) {
     return (
       // TODO: CHANGE BASE WIDTH AFTER UPDATING VERTICAL DISPLAY OF HOTELCHAINITEM.TSX
@@ -30,7 +31,7 @@ const CreateNew = (props: CreateNewProps) => {
         </CardHeader>
         <CardContent className="flex justify-center items-center">
           <Button asChild className="h-3/5 pb-3" variant="ghost">
-            <Link href="/hotel-chains/new" className="flex flex-col">
+            <Link href={href} className="flex flex-col">
               <IoAdd className="text-6xl" />
               <p className="font-bold text-lg">Create New</p>
             </Link>

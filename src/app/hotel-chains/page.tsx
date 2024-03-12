@@ -13,6 +13,7 @@ export default async function Home() {
         <h1 className="text-4xl font-bold my-10">All Hotel Chains</h1>
         <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6  ">
           <CreateNew
+            href="/hotel-chains/new"
             cta="Create a New Hotel Chain"
             description="Click the button above to create a new hotel chain!"
           />
