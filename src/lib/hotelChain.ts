@@ -1,14 +1,8 @@
 "use server";
 
+import slugify from "slugify";
 import { createDatabaseClient } from "./database";
-
-interface HotelChain {
-  chain_name: string;
-  phone_numbers: string[];
-  email_addresses: string[];
-  central_address: string;
-  number_hotels?: number;
-}
+import { hotel_chain } from "./utils";
 
 const getHotelChains = async () => {
   const db = await createDatabaseClient();
@@ -22,8 +16,9 @@ const getHotelChains = async () => {
 const getSingleHotelChain = async (chainName: string) => {
   const db = await createDatabaseClient();
   await db.connect();
-  const query = "SELECT * FROM hotel_chain WHERE chain_name = $1";
-  const values = [chainName];
+  const chainSlug = slugify(chainName, { lower: true });
+  const query = "SELECT * FROM hotel_chain WHERE chain_slug = $1";
+  const values = [chainSlug];
   const { rows } = await db.query(query, values);
   await db.end();
   return rows[0];
@@ -34,25 +29,23 @@ const updateHotelChain = async ({
   phone_numbers,
   email_addresses,
   central_address,
-}: HotelChain) => {
+}: hotel_chain) => {
   const db = await createDatabaseClient();
   await db.connect();
-  console.log(chain_name, phone_numbers, email_addresses, central_address);
-
+  const slug = slugify(chain_name, { lower: true });
   const searchQuery =
-    "SELECT * FROM hotel_chain WHERE central_address = $1 AND chain_name != $2";
-  const searchValues = [central_address, chain_name];
+    "SELECT * FROM hotel_chain WHERE central_address = $1 AND chain_slug != $2";
+  const searchValues = [central_address, slug];
   const searchResult = await db.query(searchQuery, searchValues);
 
   // Throw an error if the chain name or central address already exists
-  console.log(searchResult.rows);
   if (searchResult.rows?.length > 0) {
     return 1;
   }
 
   const query =
-    "UPDATE hotel_chain SET phone_numbers = $2, email_addresses = $3, central_address = $4 WHERE chain_name = $1";
-  const values = [chain_name, phone_numbers, email_addresses, central_address];
+    "UPDATE hotel_chain SET phone_numbers = $2, email_addresses = $3, central_address = $4 WHERE chain_slug = $1";
+  const values = [slug, phone_numbers, email_addresses, central_address];
   await db.query(query, values);
   await db.end();
   return 0;
@@ -63,13 +56,14 @@ const createHotelChain = async ({
   phone_numbers,
   email_addresses,
   central_address,
-}: HotelChain) => {
+}: hotel_chain) => {
   const db = await createDatabaseClient();
   await db.connect();
+  const slug = slugify(chain_name, { lower: true });
 
   const searchQuery =
-    "SELECT * FROM hotel_chain WHERE chain_name = $1 OR central_address = $2";
-  const searchValues = [chain_name, central_address];
+    "SELECT * FROM hotel_chain WHERE chain_slug = $1 OR central_address = $2";
+  const searchValues = [slug, central_address];
   const searchResult = await db.query(searchQuery, searchValues);
 
   // Throw an error if the chain name or central address already exists
@@ -77,8 +71,15 @@ const createHotelChain = async ({
     return 1;
   }
 
-  const query = "INSERT INTO hotel_chain VALUES ($1, $2, $3, $4)";
-  const values = [chain_name, phone_numbers, email_addresses, central_address];
+  const query =
+    "INSERT INTO hotel_chain (chain_slug, chain_name, phone_numbers, email_addresses, central_address)  VALUES ($1, $2, $3, $4, $5)";
+  const values = [
+    slug,
+    chain_name,
+    phone_numbers,
+    email_addresses,
+    central_address,
+  ];
   await db.query(query, values);
   await db.end();
   return 0;
@@ -87,8 +88,10 @@ const createHotelChain = async ({
 const deleteHotelChain = async (chainName: string) => {
   const db = await createDatabaseClient();
   await db.connect();
-  const query = "DELETE FROM hotel_chain WHERE chain_name = $1";
-  const values = [chainName];
+  const slug = slugify(chainName, { lower: true });
+
+  const query = "DELETE FROM hotel_chain WHERE chain_slug = $1";
+  const values = [slug];
   await db.query(query, values);
   await db.end();
 };

@@ -6,12 +6,12 @@ import { notFound } from "next/navigation";
 
 interface HotelChainProps {
   params: {
-    hotelChainName: string;
+    hotelChainNameSlug: string;
   };
 }
 const EditHotelChainPage = async ({ params }: HotelChainProps) => {
-  const { hotelChainName } = params;
-  const hotelChain = await getSingleHotelChain(hotelChainName);
+  const { hotelChainNameSlug } = params;
+  const hotelChain = await getSingleHotelChain(hotelChainNameSlug);
 
   if (!hotelChain) {
     notFound();

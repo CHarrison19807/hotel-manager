@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -14,6 +13,7 @@ import { useEmployeeContext } from "@/contexts/EmployeeContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
+import slugify from "slugify";
 
 const HotelChainItem = ({ hotelChain }: { hotelChain: hotel_chain }) => {
   const { isEmployee } = useEmployeeContext();
@@ -78,16 +78,24 @@ const HotelChainItem = ({ hotelChain }: { hotelChain: hotel_chain }) => {
           {isEmployee && (
             <>
               <Button asChild variant="outline">
-                <Link href={"/" + chain_name + "/edit"}>Edit Chain</Link>
+                <Link
+                  href={"/" + slugify(chain_name, { lower: true }) + "/edit"}
+                >
+                  Edit Chain
+                </Link>
               </Button>
               <Button asChild>
-                <Link href={"/" + chain_name}>View Hotels</Link>
+                <Link href={"/" + slugify(chain_name, { lower: true })}>
+                  View Hotels
+                </Link>
               </Button>
             </>
           )}
           {!isEmployee && (
             <Button asChild className="w-full">
-              <Link href={"/" + chain_name}>View Hotels</Link>
+              <Link href={"/" + slugify(chain_name, { lower: true })}>
+                View Hotels
+              </Link>
             </Button>
           )}
         </CardFooter>
@@ -100,7 +108,7 @@ const HotelChainItem = ({ hotelChain }: { hotelChain: hotel_chain }) => {
 
 export default HotelChainItem;
 
-function HotelChainPlaceholder() {
+const HotelChainPlaceholder = () => {
   return (
     <Card className="w-[400px]">
       <div className=" flex flex-col gap-1 p-5">
@@ -128,4 +136,4 @@ function HotelChainPlaceholder() {
       </div>
     </Card>
   );
-}
+};

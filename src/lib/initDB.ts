@@ -1,5 +1,5 @@
+import slugify from "slugify";
 import { createDatabaseClient } from "./database";
-import pg from "pg";
 
 // Run this file with the following command:
 // npx ts-node --skip-project src/lib/initDB.ts
@@ -279,8 +279,9 @@ const initHotelChains = async () => {
   db.connect();
   try {
     for (const chain of dummyHotelChains) {
-      const query = "INSERT INTO hotel_chain VALUES ($1, $2, $3, $4)";
+      const query = "INSERT INTO hotel_chain VALUES ($1, $2, $3, $4, $5)";
       const values = [
+        slugify(chain.chain_name, { lower: true }),
         chain.chain_name,
         chain.phone_numbers,
         chain.email_addresses,
@@ -301,10 +302,11 @@ const initHotels = async () => {
   db.connect();
   try {
     for (const hotel of dummyHotels) {
-      const query = "INSERT INTO hotel VALUES ($1, $2, $3, $4, $5, $6)";
+      const query = "INSERT INTO hotel VALUES ($1, $2, $3, $4, $5, $6, $7)";
       const values = [
+        slugify(hotel.hotel_name, { lower: true }),
         hotel.hotel_name,
-        hotel.chain_name,
+        slugify(hotel.chain_name, { lower: true }),
         hotel.phone_numbers,
         hotel.email_addresses,
         hotel.address,
@@ -329,7 +331,7 @@ const initHotelRooms = async () => {
         "INSERT INTO hotel_room VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
       const values = [
         room.room_number,
-        room.hotel_name,
+        slugify(room.hotel_name, { lower: true }),
         room.price,
         room.damages,
         room.amenities,
