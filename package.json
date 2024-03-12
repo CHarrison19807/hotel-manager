@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.3.4",
+    "@mui/material": "^5.15.12",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "arg": "^5.0.2",
@@ -23,6 +26,7 @@
     "react-hook-form": "^7.51.0",
     "react-icons": "^5.0.1",
     "shadcn-ui": "^0.8.0",
+    "slugify": "^1.6.6",
     "sonner": "^1.4.2",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
