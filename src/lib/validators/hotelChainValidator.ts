@@ -40,9 +40,6 @@ export const hotelChainValidate = z
 
     phone_numbers.map((phone, index) => {
       for (let i = 0; i < phone_numbers.length; i++) {
-        if (i === index) {
-          continue;
-        }
         if (
           formatPhoneNumber(phone)?.length != 14 ||
           formatPhoneNumber(phone) === null
@@ -53,7 +50,11 @@ export const hotelChainValidate = z
             path: ["phone_numbers", index],
           });
         }
-        if (phone === phone_numbers[i]) {
+
+        if (
+          formatPhoneNumber(phone) === formatPhoneNumber(phone_numbers[i]) &&
+          i !== index
+        ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Can not have duplicate phone numbers!",
