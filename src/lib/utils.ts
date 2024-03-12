@@ -25,14 +25,15 @@ export type hotel_chain = {
   phone_numbers: string[];
   email_addresses: string[];
   central_address: string;
-  number_hotels: number;
+  number_hotels?: number;
 };
 
 export type hotel = {
   hotel_name: string;
-  chain_name: string;
+  chain_slug: string;
   phone_numbers: string[];
   email_addresses: string[];
   address: string;
   rating: number;
+  number_rooms?: number;
 };
