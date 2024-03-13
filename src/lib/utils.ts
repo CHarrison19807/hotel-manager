@@ -37,3 +37,14 @@ export type hotel = {
   rating: number;
   number_rooms?: number;
 };
+
+export type hotel_room = {
+  room_number: number;
+  hotel_slug: string;
+  price: number;
+  damages?: string[];
+  amenities?: string[];
+  occupied: boolean;
+  extended: boolean;
+  capacity: "single" | "double" | "suite";
+};
