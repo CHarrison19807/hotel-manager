@@ -17,7 +17,6 @@ import Rating from "@mui/material/Rating";
 import slugify from "slugify";
 
 const HotelItem = ({ hotel }: { hotel: hotel }) => {
-  console.log(hotel);
   const {
     hotel_name,
     chain_slug,

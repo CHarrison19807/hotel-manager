@@ -21,7 +21,6 @@ const createHotel = async ({
   const searchValues = [hotelSlug, chain_slug, address];
   const searchResult = await db.query(searchQuery, searchValues);
 
-  console.log(searchResult.rows);
   if (searchResult.rows?.length > 0) {
     return 1;
   }
@@ -37,7 +36,6 @@ const createHotel = async ({
     address,
     rating,
   ];
-  console.log(values);
   await db.query(query, values);
   await db.end();
   return 0;

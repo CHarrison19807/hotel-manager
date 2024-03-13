@@ -113,14 +113,6 @@ const HotelForm = ({ props }: HotelFormProps) => {
     email_addresses,
     address,
   }: THotelValidate) => {
-    console.log(
-      hotel_name,
-      chain_slug,
-      phone_numbers,
-      email_addresses,
-      address,
-      rating
-    );
     try {
       setIsLoading(true);
       if (!rating) {

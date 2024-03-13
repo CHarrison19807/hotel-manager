@@ -13,7 +13,6 @@ interface HotelProps {
 const EditHotelPage = async ({ params }: HotelProps) => {
   const { hotelChainNameSlug, hotelNameSlug } = params;
   const hotel = await getSingleHotel(hotelNameSlug, hotelChainNameSlug);
-  console.log(hotel);
   if (!hotel) {
     notFound();
   }
