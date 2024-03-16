@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import {
   THotelChainValidate,
-  hotelChainValidate,
+  HotelChainValidate,
 } from "@/lib/validators/hotelChainValidator";
 import {
   HotelChain,
@@ -26,7 +26,6 @@ import {
   deleteHotelChain,
   updateHotelChain,
 } from "@/lib/hotelChain";
-import { AnyARecord } from "dns";
 import slugify from "slugify";
 
 interface HotelChainFormProps {
@@ -47,7 +46,7 @@ const HotelChainForm = (props: HotelChainFormProps) => {
       chain_name: hotelChain?.chain_name || "",
       central_address: hotelChain?.central_address || "",
     },
-    resolver: zodResolver(hotelChainValidate),
+    resolver: zodResolver(HotelChainValidate),
   });
 
   const initialPhoneNumberCount = hotelChain?.phone_numbers.length || 1;
@@ -73,11 +72,15 @@ const HotelChainForm = (props: HotelChainFormProps) => {
   };
 
   const handleRemovePhoneNumber = () => {
+    const index = phoneCount[phoneCount.length - 1];
     if (phoneCount.length > 1) setPhoneCount(phoneCount.slice(0, -1));
+    form.resetField(`phone_numbers.${index}`);
   };
 
   const handleRemoveEmailAddress = () => {
+    const index = emailCount[emailCount.length - 1];
     if (emailCount.length > 1) setEmailCount(emailCount.slice(0, -1));
+    form.resetField(`email_addresses.${index}`);
   };
 
   const { handleSubmit, control } = form;
@@ -125,6 +128,7 @@ const HotelChainForm = (props: HotelChainFormProps) => {
     }
     setIsLoading(false);
   };
+
   const handleDelete = async (chain_name: string) => {
     setIsLoading(true);
     if (await deleteHotelChain(chain_name)) {
@@ -138,6 +142,7 @@ const HotelChainForm = (props: HotelChainFormProps) => {
     }
     setIsLoading(false);
   };
+
   return (
     <div className="container relative flex pt-20 flex-col items-center justify-center lg:px-0">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[375px]">

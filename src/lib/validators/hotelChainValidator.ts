@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { formatPhoneNumber } from "../utils";
 
-export const hotelChainValidate = z
+export const HotelChainValidate = z
   .object({
     chain_name: z
       .string()
@@ -9,10 +9,10 @@ export const hotelChainValidate = z
       .max(16, {
         message: "Hotel chain name can not be longer than 16 characters!",
       }),
-    phone_numbers: z.array(
-      z.string().min(10, { message: "Enter a valid phone number!" })
+    phone_numbers: z.array(z.string()),
+    email_addresses: z.array(
+      z.string().email({ message: "Enter a valid email address!" })
     ),
-    email_addresses: z.array(z.string().email()),
     central_address: z
       .string()
       .min(1, { message: "Central address can not be empty!" })
@@ -21,6 +21,7 @@ export const hotelChainValidate = z
       }),
   })
   .superRefine((data, ctx) => {
+    console.log(data.phone_numbers, data.email_addresses);
     const phone_numbers = data.phone_numbers;
     const email_addresses = data.email_addresses;
     email_addresses.map((email, index) => {
@@ -28,7 +29,7 @@ export const hotelChainValidate = z
         if (i === index) {
           continue;
         }
-        if (email === email_addresses[i]) {
+        if (email.toLowerCase() === email_addresses[i].toLowerCase()) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Can not have duplicate email addresses!",
@@ -36,33 +37,32 @@ export const hotelChainValidate = z
           });
         }
       }
-    });
+      phone_numbers.map((phone: any, index: number) => {
+        for (let i = 0; i < phone_numbers.length; i++) {
+          if (
+            formatPhoneNumber(phone)?.length != 14 ||
+            formatPhoneNumber(phone) === null
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Enter a valid phone number!",
+              path: ["phone_numbers", index],
+            });
+          }
 
-    phone_numbers.map((phone, index) => {
-      for (let i = 0; i < phone_numbers.length; i++) {
-        if (
-          formatPhoneNumber(phone)?.length != 14 ||
-          formatPhoneNumber(phone) === null
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Enter a valid phone number!",
-            path: ["phone_numbers", index],
-          });
+          if (
+            formatPhoneNumber(phone) === formatPhoneNumber(phone_numbers[i]) &&
+            i !== index
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Can not have duplicate phone numbers!",
+              path: ["phone_numbers", i],
+            });
+          }
         }
-
-        if (
-          formatPhoneNumber(phone) === formatPhoneNumber(phone_numbers[i]) &&
-          i !== index
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Can not have duplicate phone numbers!",
-            path: ["phone_numbers", i],
-          });
-        }
-      }
+      });
     });
   });
 
-export type THotelChainValidate = z.infer<typeof hotelChainValidate>;
+export type THotelChainValidate = z.infer<typeof HotelChainValidate>;
