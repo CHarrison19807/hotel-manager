@@ -1,10 +1,78 @@
+/**
+ * @fileOverview This file contains functions related to hotel chains.
+ */
+
 "use server";
 
 import slugify from "slugify";
 import { createDatabaseClient } from "./database";
-import { hotel_chain } from "./utils";
 
-const getHotelChains = async () => {
+/**
+ * Represents a hotel chain.
+ */
+export type HotelChain = {
+  chain_name: string;
+  chain_slug?: string;
+  phone_numbers: string[];
+  email_addresses: string[];
+  central_address: string;
+  number_hotels?: number;
+};
+
+/**
+ * Creates a new hotel chain.
+ * @param chain_name - The name of the hotel chain.
+ * @param phone_numbers - An array of phone numbers associated with the hotel chain.
+ * @param email_addresses - An array of email addresses associated with the hotel chain.
+ * @param central_address - The central address of the hotel chain.
+ * @returns A promise that resolves to an empty string if the hotel chain is created successfully, or an error message if an error occurs.
+ */
+const createHotelChain = async ({
+  chain_name,
+  phone_numbers,
+  email_addresses,
+  central_address,
+}: HotelChain): Promise<string> => {
+  try {
+    const db = await createDatabaseClient();
+    await db.connect();
+    const slug = slugify(chain_name, { lower: true });
+
+    const searchQuery =
+      "SELECT * FROM hotel_chain WHERE chain_slug = $1 OR central_address = $2";
+    const searchValues = [slug, central_address];
+    const searchResult = await db.query(searchQuery, searchValues);
+
+    if (searchResult.rows?.length > 0) {
+      if (searchResult.rows[0].chain_slug === slug)
+        return "Hotel chain already exists!";
+      if (searchResult.rows[0].central_address === central_address)
+        return "Central address already exists!";
+    }
+
+    const query =
+      "INSERT INTO hotel_chain (chain_slug, chain_name, phone_numbers, email_addresses, central_address)  VALUES ($1, $2, $3, $4, $5)";
+    const values = [
+      slug,
+      chain_name,
+      phone_numbers,
+      email_addresses,
+      central_address,
+    ];
+    await db.query(query, values);
+    await db.end();
+
+    return "";
+  } catch (error) {
+    return "Unexpected error occurred while creating hotel chain. Please try again.";
+  }
+};
+
+/**
+ * Retrieves all hotel chains.
+ * @returns A promise that resolves to an array of hotel chains.
+ */
+const getAllHotelChains = async (): Promise<HotelChain[]> => {
   const db = await createDatabaseClient();
   await db.connect();
   const query = "SELECT * FROM hotel_chain";
@@ -13,7 +81,12 @@ const getHotelChains = async () => {
   return rows;
 };
 
-const getSingleHotelChain = async (chainName: string) => {
+/**
+ * Retrieves a single hotel chain by its name.
+ * @param chainName - The name of the hotel chain.
+ * @returns A promise that resolves to the hotel chain object.
+ */
+const getSingleHotelChain = async (chainName: string): Promise<HotelChain> => {
   const db = await createDatabaseClient();
   await db.connect();
   const chainSlug = slugify(chainName, { lower: true });
@@ -24,80 +97,75 @@ const getSingleHotelChain = async (chainName: string) => {
   return rows[0];
 };
 
+/**
+ * Updates a hotel chain.
+ * @param chain_name - The name of the hotel chain.
+ * @param phone_numbers - An array of phone numbers associated with the hotel chain.
+ * @param email_addresses - An array of email addresses associated with the hotel chain.
+ * @param central_address - The central address of the hotel chain.
+ * @returns A promise that resolves to an empty string if the update is successful, or an error message if an error occurs.
+ */
 const updateHotelChain = async ({
   chain_name,
+  chain_slug,
   phone_numbers,
   email_addresses,
   central_address,
-}: hotel_chain) => {
-  const db = await createDatabaseClient();
-  await db.connect();
-  const slug = slugify(chain_name, { lower: true });
-  const searchQuery =
-    "SELECT * FROM hotel_chain WHERE central_address = $1 AND chain_slug != $2";
-  const searchValues = [central_address, slug];
-  const searchResult = await db.query(searchQuery, searchValues);
+}: HotelChain): Promise<string> => {
+  try {
+    if (chain_slug !== slugify(chain_name, { lower: true }))
+      return "Hotel chain name cannot be changed!";
+    const db = await createDatabaseClient();
+    await db.connect();
+    const slug = slugify(chain_name, { lower: true });
 
-  // Throw an error if the chain name or central address already exists
-  if (searchResult.rows?.length > 0) {
-    return 1;
+    const searchQuery =
+      "SELECT * FROM hotel_chain WHERE central_address = $1 AND chain_slug != $2";
+    const searchValues = [central_address, slug];
+    const searchResult = await db.query(searchQuery, searchValues);
+
+    // Throw an error if the chain name or central address already exists
+    if (searchResult.rows?.length > 0) {
+      if (searchResult.rows[0].chain_slug === slug)
+        return "Hotel chain already exists!";
+      if (searchResult.rows[0].central_address === central_address)
+        return "Central address already exists!";
+    }
+
+    const query =
+      "UPDATE hotel_chain SET phone_numbers = $2, email_addresses = $3, central_address = $4 WHERE chain_slug = $1";
+    const values = [slug, phone_numbers, email_addresses, central_address];
+    await db.query(query, values);
+    await db.end();
+    return "";
+  } catch (error) {
+    return "Unexpected error occurred while updating hotel chain. Please try again.";
   }
-
-  const query =
-    "UPDATE hotel_chain SET phone_numbers = $2, email_addresses = $3, central_address = $4 WHERE chain_slug = $1";
-  const values = [slug, phone_numbers, email_addresses, central_address];
-  await db.query(query, values);
-  await db.end();
-  return 0;
 };
 
-const createHotelChain = async ({
-  chain_name,
-  phone_numbers,
-  email_addresses,
-  central_address,
-}: hotel_chain) => {
-  const db = await createDatabaseClient();
-  await db.connect();
-  const slug = slugify(chain_name, { lower: true });
+/**
+ * Deletes a hotel chain.
+ * @param chainName - The name of the hotel chain to delete.
+ * @returns A promise that resolves to a boolean indicating whether the deletion was successful or not.
+ */
+const deleteHotelChain = async (chainName: string): Promise<boolean> => {
+  try {
+    const db = await createDatabaseClient();
+    await db.connect();
+    const slug = slugify(chainName, { lower: true });
 
-  const searchQuery =
-    "SELECT * FROM hotel_chain WHERE chain_slug = $1 OR central_address = $2";
-  const searchValues = [slug, central_address];
-  const searchResult = await db.query(searchQuery, searchValues);
-
-  // Throw an error if the chain name or central address already exists
-  if (searchResult.rows?.length > 0) {
-    return 1;
+    const query = "DELETE FROM hotel_chain WHERE chain_slug = $1";
+    const values = [slug];
+    await db.query(query, values);
+    await db.end();
+    return true;
+  } catch (error) {
+    return false;
   }
-
-  const query =
-    "INSERT INTO hotel_chain (chain_slug, chain_name, phone_numbers, email_addresses, central_address)  VALUES ($1, $2, $3, $4, $5)";
-  const values = [
-    slug,
-    chain_name,
-    phone_numbers,
-    email_addresses,
-    central_address,
-  ];
-  await db.query(query, values);
-  await db.end();
-  return 0;
-};
-
-const deleteHotelChain = async (chainName: string) => {
-  const db = await createDatabaseClient();
-  await db.connect();
-  const slug = slugify(chainName, { lower: true });
-
-  const query = "DELETE FROM hotel_chain WHERE chain_slug = $1";
-  const values = [slug];
-  await db.query(query, values);
-  await db.end();
 };
 
 export {
-  getHotelChains,
+  getAllHotelChains,
   getSingleHotelChain,
   updateHotelChain,
   createHotelChain,
