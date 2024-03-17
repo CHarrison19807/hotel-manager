@@ -1,19 +1,14 @@
 "use client";
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button, buttonVariants } from "./ui/button";
+import { Button } from "./ui/button";
 import { FaHotel } from "react-icons/fa";
-import { useEmployeeContext } from "@/contexts/EmployeeContext";
 import { useRouter } from "next/navigation";
+import useUser from "@/app/hooks/useUser";
 
 const Navbar = () => {
   const router = useRouter();
-  const { isEmployee, setIsEmployee } = useEmployeeContext();
-
-  const handleSwitch = () => {
-    setIsEmployee(!isEmployee);
-    router.refresh();
-  };
+  const { user, userRole, setUser, clearUser } = useUser();
 
   return (
     <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
@@ -32,15 +27,20 @@ const Navbar = () => {
                     </Link>
                   </Button>
                 </div>
-                <Button
-                  className="mr-4 lg:mr-0"
-                  variant="ghost"
-                  onClick={handleSwitch}
-                >
-                  <p className="font-medium">
-                    Switch to {isEmployee ? "Customer" : "Employee"}
-                  </p>
-                </Button>
+                {user ? (
+                  <Button variant="secondary" onClick={clearUser}>
+                    Logout
+                  </Button>
+                ) : (
+                  <div className="flex gap-3">
+                    <Button>
+                      <Link href="/employees">Login as employee</Link>
+                    </Button>
+                    <Button>
+                      <Link href="/customers">Login as customer</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
