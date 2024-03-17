@@ -1,7 +1,19 @@
-import { createDatabaseClient } from "./database";
-import { hotel_room } from "./utils";
+"use server";
 
-const createhotelRoom = async ({
+import { createDatabaseClient } from "./database";
+
+export type HotelRoom = {
+  room_number: number;
+  hotel_slug: string;
+  price: number;
+  damages?: string[];
+  amenities?: string[];
+  occupied: boolean;
+  extended: boolean;
+  capacity: "single" | "double" | "suite";
+};
+
+const createHotelRoom = async ({
   room_number,
   hotel_slug,
   price,
@@ -10,8 +22,10 @@ const createhotelRoom = async ({
   occupied,
   extended,
   capacity,
-}: hotel_room) => {
+}: HotelRoom) => {
   const db = await createDatabaseClient();
+  await db.connect();
+
   const searchQuery =
     "SELECT * FROM hotel_room WHERE room_number = $1 AND hotel_slug = $2";
   const searchValues = [room_number, hotel_slug];
@@ -40,15 +54,18 @@ const createhotelRoom = async ({
 
 const getHotelRooms = async (hotel_slug: string) => {
   const db = await createDatabaseClient();
-  const query = "SELECT * FROM hotel_room WHERE hotel_slug = $1";
+  await db.connect();
+  const query = "SELECT * FROM hotel_room";
   const values = [hotel_slug];
-  const { rows } = await db.query(query, values);
+  const { rows } = await db.query(query);
   await db.end();
   return rows;
 };
 
 const getSingleRoom = async (hotel_slug: string, room_number: number) => {
   const db = await createDatabaseClient();
+  await db.connect();
+
   const query =
     "SELECT * FROM hotel_room WHERE hotel_slug = $1 AND room_number = $2";
   const values = [hotel_slug, room_number];
@@ -59,6 +76,7 @@ const getSingleRoom = async (hotel_slug: string, room_number: number) => {
 
 const getAllRooms = async () => {
   const db = await createDatabaseClient();
+  await db.connect();
   const query = "SELECT * FROM hotel_room";
   const { rows } = await db.query(query);
   await db.end();
@@ -74,8 +92,10 @@ const updateHotelRoom = async ({
   occupied,
   extended,
   capacity,
-}: hotel_room) => {
+}: HotelRoom) => {
   const db = await createDatabaseClient();
+  await db.connect();
+
   const searchQuery =
     "SELECT * FROM hotel_room WHERE room_number = $1 AND hotel_slug = $2";
   const searchValues = [room_number, hotel_slug];
@@ -103,9 +123,20 @@ const updateHotelRoom = async ({
 
 const deleteHotelRoom = async (hotel_slug: string, room_number: number) => {
   const db = await createDatabaseClient();
+  await db.connect();
+
   const query =
     "DELETE FROM hotel_room WHERE hotel_slug = $1 AND room_number = $2";
   const values = [hotel_slug, room_number];
   await db.query(query, values);
   await db.end();
+};
+
+export {
+  createHotelRoom,
+  getHotelRooms,
+  getSingleRoom,
+  getAllRooms,
+  updateHotelRoom,
+  deleteHotelRoom,
 };
