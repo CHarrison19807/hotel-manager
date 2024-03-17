@@ -19,8 +19,11 @@ export const hotelValidate = z
       .max(24, {
         message: "Address can not be longer than 24 characters!",
       }),
+    rating: z.coerce.number().int().min(1, { message: "Select a rating!" }),
+    chain_slug: z.string().min(1, { message: "Select a hotel chain!" }),
   })
   .superRefine((data, ctx) => {
+    console.log(data);
     const phone_numbers = data.phone_numbers;
     const email_addresses = data.email_addresses;
     email_addresses.map((email, index) => {
@@ -40,20 +43,19 @@ export const hotelValidate = z
 
     phone_numbers.map((phone, index) => {
       for (let i = 0; i < phone_numbers.length; i++) {
-        if (i === index) {
-          continue;
-        }
-        if (
-          formatPhoneNumber(phone)?.length != 14 ||
-          formatPhoneNumber(phone) === null
-        ) {
+        const formattedPhone = formatPhoneNumber(phone);
+
+        if (formattedPhone?.length != 14 || formattedPhone === null) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Enter a valid phone number!",
             path: ["phone_numbers", index],
           });
         }
-        if (phone === phone_numbers[i]) {
+        if (
+          formattedPhone === formatPhoneNumber(phone_numbers[i]) &&
+          i !== index
+        ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Can not have duplicate phone numbers!",

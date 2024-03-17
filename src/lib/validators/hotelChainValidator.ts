@@ -39,10 +39,8 @@ export const HotelChainValidate = z
       }
       phone_numbers.map((phone: any, index: number) => {
         for (let i = 0; i < phone_numbers.length; i++) {
-          if (
-            formatPhoneNumber(phone)?.length != 14 ||
-            formatPhoneNumber(phone) === null
-          ) {
+          const formattedPhone = formatPhoneNumber(phone);
+          if (formattedPhone?.length != 14 || formattedPhone === null) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: "Enter a valid phone number!",
@@ -51,7 +49,7 @@ export const HotelChainValidate = z
           }
 
           if (
-            formatPhoneNumber(phone) === formatPhoneNumber(phone_numbers[i]) &&
+            formattedPhone === formatPhoneNumber(phone_numbers[i]) &&
             i !== index
           ) {
             ctx.addIssue({
