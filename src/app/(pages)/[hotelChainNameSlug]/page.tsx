@@ -1,9 +1,9 @@
 import CreateNew from "@/components/CreateNewItem";
 import HotelItem from "@/components/HotelItem";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getHotel, getSingleHotel } from "@/lib/hotel";
+import { getChainHotels, getSingleHotel } from "@/lib/hotel";
 import { getSingleHotelChain } from "@/lib/hotelChain";
-import { hotel } from "@/lib/utils";
+import { Hotel } from "@/lib/hotel";
 import { notFound } from "next/navigation";
 
 interface HotelChainProps {
@@ -14,7 +14,7 @@ interface HotelChainProps {
 
 const HotelChainPage = async ({ params }: HotelChainProps) => {
   const { hotelChainNameSlug } = params;
-  const hotels = await getHotel(hotelChainNameSlug);
+  const hotels = await getChainHotels(hotelChainNameSlug);
   const hotelChain = await getSingleHotelChain(hotelChainNameSlug);
 
   if (!hotels || !hotelChain) {
