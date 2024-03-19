@@ -1,11 +1,23 @@
 import { type ClassValue, clsx } from "clsx";
+import { cookies } from "next/headers";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
+/**
+ * Combines multiple class names into a single string.
+ * @param inputs - The class names to be combined.
+ * @returns The combined class names as a string.
+ */
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
 
-export function formatPhoneNumber(phoneNumberString: string) {
+/**
+ * Formats a phone number string into a specific format.
+ * @param phoneNumberString - The phone number string to be formatted.
+ *
+ * @returns The formatted phone number string, or null if the input contains alphabetic characters.
+ */
+export function formatPhoneNumber(phoneNumberString: string): string | null {
   const containsAlphabetic = /[a-zA-Z]/.test(phoneNumberString);
 
   if (containsAlphabetic) {
@@ -20,31 +32,78 @@ export function formatPhoneNumber(phoneNumberString: string) {
   return final;
 }
 
-export type hotel_chain = {
-  chain_name: string;
-  phone_numbers: string[];
-  email_addresses: string[];
-  central_address: string;
-  number_hotels?: number;
+/**
+ * Formats a price value into a specific currency format.
+ * @param price - The price value to be formatted.
+ * @param options - The formatting options including currency and notation.
+ * @returns The formatted price as a string.
+ */
+export const formatPrice = (
+  price: number | string,
+  options: {
+    currency?: "USD" | "EUR" | "GBP" | "BDT";
+    notation?: Intl.NumberFormatOptions["notation"];
+  } = {}
+): string => {
+  const { currency = "USD", notation = "compact" } = options;
+
+  const numericPrice = typeof price === "string" ? parseFloat(price) : price;
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    notation,
+    maximumFractionDigits: 2,
+  }).format(numericPrice);
 };
 
-export type hotel = {
-  hotel_name: string;
-  chain_slug: string;
-  phone_numbers: string[];
-  email_addresses: string[];
-  address: string;
-  rating: number;
-  number_rooms?: number;
+/**
+ * Converts a slug string into a human-readable format.
+ * @param slug - The slug string to be converted.
+ * @returns The converted string with words separated by spaces and capitalized.
+ */
+export const unslugify = (slug: string): string => {
+  let words = slug.split("-");
+  words = words.map((word) => {
+    if (word.length < 4) return word;
+
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+  return words.join(" ");
 };
 
-export type hotel_room = {
-  room_number: number;
-  hotel_slug: string;
-  price: number;
-  damages?: string[];
-  amenities?: string[];
-  occupied: boolean;
-  extended: boolean;
-  capacity: "single" | "double" | "suite";
+/**
+ * Formats a Social Insurance Number (SIN) string into a specific format.
+ * @param sin - The SIN string to be formatted.
+ * @returns The formatted SIN string.
+ */
+export const formatSIN = (sin: string): string => {
+  return sin.replace(/(\d{3})(\d{3})(\d{3})/, "$1-$2-$3");
+};
+
+/**
+ * Converts an ID string into a human-readable format.
+ * @param id - The ID string to be converted.
+ * @returns The converted string with words separated by spaces and capitalized.
+ */
+export const unIDify = (id: string): string => {
+  let words = id.split("_");
+  words = words.map((word) => {
+    if (word.length < 4) return word;
+
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+  if (words.length === 1 && words[0].length < 4) {
+    return words[0].toUpperCase();
+  }
+  return words.join(" ");
+};
+
+/**
+ * Generates a random ID string.
+ * @returns The generated ID string.
+ */
+export const generateID = (): string => {
+  const id = (Math.floor(Math.random() * 900000000) + 100000000).toString();
+  return id;
 };
