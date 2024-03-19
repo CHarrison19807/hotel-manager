@@ -6,16 +6,17 @@ export type Customer = {
   full_name: string;
   address: string;
   sin: string;
-  date_registered: string;
+  date_registered?: string;
 };
 
-const createCustomer = async (
-  full_name: string,
-  address: string,
-  sin: string
-): Promise<string> => {
+const createCustomer = async ({
+  full_name,
+  address,
+  sin,
+}: Customer): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
 
     const searchQueries = [
@@ -49,6 +50,8 @@ const createCustomer = async (
   } catch (error) {
     console.error(error);
     return "Unexpected error while creating customer! Please try again.";
+  } finally {
+    await db.end();
   }
 };
 
@@ -73,13 +76,14 @@ const getCustomer = async (sin: string): Promise<Customer> => {
   return results.rows[0];
 };
 
-const updateCustomer = async (
-  full_name: string,
-  address: string,
-  sin: string
-): Promise<string> => {
+const updateCustomer = async ({
+  full_name,
+  address,
+  sin,
+}: Customer): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
 
     const query =
@@ -90,13 +94,16 @@ const updateCustomer = async (
   } catch (error) {
     console.error(error);
     return "Unexpected error while updating customer! Please try again.";
+  } finally {
+    await db.end();
   }
   return "";
 };
 
 const deleteCustomer = async (sin: string): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
 
     const query = "DELETE FROM customer WHERE sin = $1;";
@@ -106,6 +113,8 @@ const deleteCustomer = async (sin: string): Promise<string> => {
   } catch (error) {
     console.error(error);
     return "Unexpected error while deleting customer! Please try again.";
+  } finally {
+    await db.end();
   }
   return "";
 };

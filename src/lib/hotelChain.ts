@@ -33,8 +33,9 @@ const createHotelChain = async ({
   email_addresses,
   central_address,
 }: HotelChain): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
     const slug = slugify(chain_name, { lower: true });
 
@@ -60,12 +61,12 @@ const createHotelChain = async ({
       central_address,
     ];
     await db.query(query, values);
-    await db.end();
-
-    return "";
   } catch (error) {
     return "Unexpected error occurred while creating hotel chain. Please try again.";
+  } finally {
+    await db.end();
   }
+  return "";
 };
 
 /**
@@ -107,15 +108,13 @@ const getSingleHotelChain = async (chainName: string): Promise<HotelChain> => {
  */
 const updateHotelChain = async ({
   chain_name,
-  chain_slug,
   phone_numbers,
   email_addresses,
   central_address,
 }: HotelChain): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    if (chain_slug !== slugify(chain_name, { lower: true }))
-      return "Hotel chain name cannot be changed!";
-    const db = await createDatabaseClient();
     await db.connect();
     const slug = slugify(chain_name, { lower: true });
 
@@ -136,32 +135,37 @@ const updateHotelChain = async ({
       "UPDATE hotel_chain SET phone_numbers = $2, email_addresses = $3, central_address = $4 WHERE chain_slug = $1";
     const values = [slug, phone_numbers, email_addresses, central_address];
     await db.query(query, values);
-    await db.end();
-    return "";
   } catch (error) {
     return "Unexpected error occurred while updating hotel chain. Please try again.";
+  } finally {
+    await db.end();
   }
+  return "";
 };
 
 /**
  * Deletes a hotel chain.
  * @param chainName - The name of the hotel chain to delete.
- * @returns A promise that resolves to a boolean indicating whether the deletion was successful or not.
+ * @returns A promise that resolves to an empty string if the deletion is successful, or an error message if an error occurs.
  */
-const deleteHotelChain = async (chainName: string): Promise<boolean> => {
+// TODO: fix error when deleting hotel chain with hotel referenced by booking table
+const deleteHotelChain = async (chainName: string): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
     const slug = slugify(chainName, { lower: true });
 
     const query = "DELETE FROM hotel_chain WHERE chain_slug = $1";
     const values = [slug];
     await db.query(query, values);
-    await db.end();
-    return true;
   } catch (error) {
-    return false;
+    console.error(error);
+    return "Unexpected error occurred while deleting hotel chain. Please try again.";
+  } finally {
+    await db.end();
   }
+  return "";
 };
 
 export {

@@ -19,8 +19,9 @@ export type Employee = {
  * @returns A promise that resolves to an empty string if the employee is created successfully, or an error message if an error occurs.
  */
 const createEmployee = async (employee: Employee): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
 
     const { full_name, address, sin, role, hotel_slug } = employee;
@@ -39,6 +40,8 @@ const createEmployee = async (employee: Employee): Promise<string> => {
     await db.end();
   } catch (error) {
     return "Unexpected error occurred while creating employee! Please try again.";
+  } finally {
+    await db.end();
   }
   return "";
 };
@@ -92,8 +95,9 @@ const getEmployee = async (sin: string): Promise<Employee> => {
  * @returns A promise that resolves to an empty string if the employee is updated successfully, or an error message if an error occurs.
  */
 const updateEmployee = async (employee: Employee): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
     const { full_name, address, sin, role, hotel_slug } = employee;
     const query =
@@ -103,6 +107,8 @@ const updateEmployee = async (employee: Employee): Promise<string> => {
     await db.end();
   } catch (error) {
     return "Unexpected error occurred while updating employee! Please try again.";
+  } finally {
+    await db.end();
   }
   return "";
 };
@@ -113,15 +119,17 @@ const updateEmployee = async (employee: Employee): Promise<string> => {
  * @returns A promise that resolves to an empty string if the employee is deleted successfully, or an error message if an error occurs.
  */
 const deleteEmployee = async (sin: string): Promise<string> => {
+  const db = await createDatabaseClient();
+
   try {
-    const db = await createDatabaseClient();
     await db.connect();
     const query = "DELETE FROM employee WHERE sin = $1";
     const values = [sin];
     await db.query(query, values);
-    await db.end();
   } catch (error) {
     return "Unexpected error occurred while deleting employee! Please try again.";
+  } finally {
+    await db.end();
   }
   return "";
 };
