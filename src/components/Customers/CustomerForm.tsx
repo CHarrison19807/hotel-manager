@@ -28,8 +28,7 @@ import {
 } from "@/lib/validators/customerValidator";
 import { formatSIN } from "@/lib/utils";
 import FormWrapper from "../FormWrapper";
-import { getServerSideUser, isSelfOrEmployee } from "@/lib/user";
-import { Employee } from "@/lib/employee";
+import { isSelfOrEmployee } from "@/lib/user";
 
 interface CustomerFormProps {
   customer?: Customer;
