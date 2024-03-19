@@ -14,7 +14,6 @@ const EmployeeValidate = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Enter a valid SIN!",
-        path: ["sin"],
       });
     }
   }),
