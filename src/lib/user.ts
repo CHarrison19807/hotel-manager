@@ -45,4 +45,17 @@ const getServerSideUser = async (): Promise<User> => {
   return null;
 };
 
-export { setUser, logoutUser, getServerSideUser };
+/**
+ * Checks if the user is the same user or an employee.
+ * @param sin - The SIN of the user to check against.
+ * @returns A Promise that resolves to true if the user is the same user or an employee, or false otherwise.
+ */
+const isSelfOrEmployee = async (sin: string): Promise<boolean> => {
+  const user = await getServerSideUser();
+  if (user && user.sin === sin) return true;
+  if (user && (user as Employee).role) return true;
+
+  return false;
+};
+
+export { setUser, logoutUser, getServerSideUser, isSelfOrEmployee };
