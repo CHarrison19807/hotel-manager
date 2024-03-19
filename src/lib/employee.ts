@@ -108,11 +108,11 @@ const updateEmployee = async (employee: Employee): Promise<string> => {
 };
 
 /**
- * Deletes an employee from the database based on their SIN (Social Insurance Number).
+ * Deletes an employee from the database.
  * @param sin - The SIN of the employee to be deleted.
- * @returns A promise that resolves to true if the employee is deleted successfully, or false if an error occurs.
+ * @returns A promise that resolves to an empty string if the employee is deleted successfully, or an error message if an error occurs.
  */
-const deleteEmployee = async (sin: string): Promise<boolean> => {
+const deleteEmployee = async (sin: string): Promise<string> => {
   try {
     const db = await createDatabaseClient();
     await db.connect();
@@ -121,9 +121,9 @@ const deleteEmployee = async (sin: string): Promise<boolean> => {
     await db.query(query, values);
     await db.end();
   } catch (error) {
-    return false;
+    return "Unexpected error occurred while deleting employee! Please try again.";
   }
-  return true;
+  return "";
 };
 
 export {
