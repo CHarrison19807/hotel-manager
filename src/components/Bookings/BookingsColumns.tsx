@@ -19,10 +19,10 @@ const BookingColumns: ColumnDef<Booking>[] = [
     },
   },
   {
-    header: "Customer ID",
-    accessorKey: "customer_id",
+    header: "SIN",
+    accessorKey: "sin",
     cell: ({ row }) => {
-      const original: string = row.getValue("customer_id");
+      const original: string = row.getValue("sin");
       const final: string = original.replace(
         /(\d{3})(\d{3})(\d{3})/,
         "$1-$2-$3"

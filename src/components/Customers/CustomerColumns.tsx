@@ -25,10 +25,10 @@ const CustomerColumns: ColumnDef<Customer>[] = [
     accessorKey: "address",
   },
   {
-    header: "Customer ID",
-    accessorKey: "customer_id",
+    header: "SIN",
+    accessorKey: "sin",
     cell: ({ row }) => {
-      const original: string = row.getValue("customer_id");
+      const original: string = row.getValue("sin");
       const final: string = original.replace(
         /(\d{3})(\d{3})(\d{3})/,
         "$1-$2-$3"
@@ -60,7 +60,7 @@ const CustomerColumns: ColumnDef<Customer>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const customer: Customer = row.original;
-      const { full_name, address, customer_id, date_registered } = customer;
+      const { full_name, address, sin, date_registered } = customer;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -72,18 +72,18 @@ const CustomerColumns: ColumnDef<Customer>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(customer_id)}
+              onClick={() => navigator.clipboard.writeText(sin)}
             >
               Copy customer ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`customers/${customer_id}`}>Edit customer</Link>
+              <Link href={`customers/${sin}`}>Edit customer</Link>
             </DropdownMenuItem>
             <LoginDropdownMenuItem
               full_name={full_name}
               address={address}
-              customer_id={customer_id}
+              sin={sin}
               date_registered={date_registered}
             ></LoginDropdownMenuItem>
           </DropdownMenuContent>
