@@ -24,10 +24,8 @@ export default function RootLayout({
         className={cn("relative h-full font-sans antialiased", inter.className)}
       >
         <main className="relative flex flex-col min-h-screen">
-          <EmployeeProvider>
-            <NavBar />
-            <div className="flex-grow flex-1">{children}</div>
-          </EmployeeProvider>
+          <NavBar />
+          <div className="flex-grow flex-1">{children}</div>
         </main>
 
         <Toaster position="top-center" richColors />
