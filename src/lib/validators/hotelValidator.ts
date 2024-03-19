@@ -23,7 +23,6 @@ export const hotelValidate = z
     chain_slug: z.string().min(1, { message: "Select a hotel chain!" }),
   })
   .superRefine((data, ctx) => {
-    console.log(data);
     const phone_numbers = data.phone_numbers;
     const email_addresses = data.email_addresses;
     email_addresses.map((email, index) => {

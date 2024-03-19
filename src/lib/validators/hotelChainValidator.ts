@@ -21,7 +21,6 @@ export const HotelChainValidate = z
       }),
   })
   .superRefine((data, ctx) => {
-    console.log(data.phone_numbers, data.email_addresses);
     const phone_numbers = data.phone_numbers;
     const email_addresses = data.email_addresses;
     email_addresses.map((email, index) => {
