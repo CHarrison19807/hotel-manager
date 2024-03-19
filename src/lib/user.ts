@@ -58,4 +58,32 @@ const isSelfOrEmployee = async (sin: string): Promise<boolean> => {
   return false;
 };
 
-export { setUser, logoutUser, getServerSideUser, isSelfOrEmployee };
+/**
+ * Checks if the user is the same user or a manager at the specified hotel.
+ * @param sin - The SIN of the user to check against.
+ * @param hotel_slug - The slug of the hotel to check against.
+ * @returns A Promise that resolves to true if the user is the same user or a manager at the specified hotel, or false otherwise.
+ */
+const isSelfOrManagerAtHotel = async (
+  sin: string,
+  hotel_slug: string
+): Promise<boolean> => {
+  const user = await getServerSideUser();
+  if (user && user.sin === sin) return true;
+  if (
+    user &&
+    (user as Employee).role === "manager" &&
+    (user as Employee).hotel_slug === hotel_slug
+  )
+    return true;
+
+  return false;
+};
+
+export {
+  setUser,
+  logoutUser,
+  getServerSideUser,
+  isSelfOrEmployee,
+  isSelfOrManagerAtHotel,
+};
