@@ -7,12 +7,7 @@ const CreateEmployeePage = async () => {
 
   return (
     <MaxWidthWrapper>
-      <EmployeeForm
-        usage="create"
-        headerText="Create Employee"
-        submitText="Create"
-        hotels={hotels}
-      />
+      <EmployeeForm hotels={hotels} />
     </MaxWidthWrapper>
   );
 };

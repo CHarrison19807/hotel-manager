@@ -9,7 +9,7 @@ interface EmployeePageProps {
     EmployeeSIN: string;
   };
 }
-// REDO ROUTES, ADMIN ROUTES AND NORMAL ROUTES
+
 const EmployeePage = async ({ params }: EmployeePageProps) => {
   const { EmployeeSIN } = params;
   const hotels = await getAllHotels();
@@ -21,13 +21,7 @@ const EmployeePage = async ({ params }: EmployeePageProps) => {
 
   return (
     <MaxWidthWrapper>
-      <EmployeeForm
-        usage="edit"
-        headerText="Edit Employee"
-        submitText={`Edit ${employee.full_name}`}
-        hotels={hotels}
-        employee={employee}
-      />
+      <EmployeeForm hotels={hotels} employee={employee} />
     </MaxWidthWrapper>
   );
 };

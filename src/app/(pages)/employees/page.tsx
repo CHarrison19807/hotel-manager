@@ -1,11 +1,10 @@
 import EmployeeColumns from "@/components/Employees/EmployeeColumns";
 import DataTable from "@/components/DataTable";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getAllEmployees } from "@/lib/employee";
+import { Employee, getAllEmployees } from "@/lib/employee";
 
 const ViewEmployeesPage = async () => {
-  const employees = await getAllEmployees();
-
+  const employees: Employee[] = await getAllEmployees();
   return (
     <MaxWidthWrapper>
       <div className="container py-10">
