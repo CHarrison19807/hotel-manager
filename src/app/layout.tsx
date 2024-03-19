@@ -4,7 +4,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import NavBar from "@/components/NavBar";
 import { Toaster } from "sonner";
-import { EmployeeProvider } from "@/contexts/EmployeeContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
