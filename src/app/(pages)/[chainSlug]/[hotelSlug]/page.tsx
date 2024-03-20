@@ -14,7 +14,6 @@ const HotelPage = async ({ params }: HotelProps) => {
   const { hotelSlug, chainSlug } = params;
   const rooms = await getHotelRooms(hotelSlug);
   const hotel = await getSingleHotel(hotelSlug);
-  console.log(rooms, hotel);
   if (!rooms || !hotel) {
     notFound();
   }
