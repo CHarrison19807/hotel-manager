@@ -28,7 +28,7 @@ import {
 } from "@/lib/validators/customerValidator";
 import { formatSIN } from "@/lib/utils";
 import FormWrapper from "../FormWrapper";
-import { isSelfOrEmployee } from "@/lib/user";
+import { isManager, isSelf } from "@/lib/user";
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -52,13 +52,13 @@ const CustomerForm = (props: CustomerFormProps) => {
 
   const handleDelete = async (sin: string) => {
     setIsLoading(true);
-    if (await isSelfOrEmployee(sin)) {
+    if ((await isSelf(sin)) || (await isManager())) {
       const result = await deleteCustomer(sin);
 
       if (result) {
         toast.error(result);
       } else {
-        toast.success(`Succesfully deleted customer!`);
+        toast.success(`Successfully deleted customer!`);
         router.push("/customers");
         router.refresh();
       }
@@ -74,10 +74,10 @@ const CustomerForm = (props: CustomerFormProps) => {
     let result: string;
     let create: boolean;
     if (customer) {
-      result = await updateCustomer(full_name, address, sin);
+      result = await updateCustomer({ full_name, address, sin });
       create = false;
     } else {
-      result = await createCustomer(full_name, address, sin);
+      result = await createCustomer({ full_name, address, sin });
       create = true;
     }
     setIsLoading(false);
@@ -86,7 +86,7 @@ const CustomerForm = (props: CustomerFormProps) => {
       toast.error(result);
     } else {
       const verb = create ? "created" : "updated";
-      toast.success(`Succesfully ${verb} customer!`);
+      toast.success(`Successfully ${verb} customer!`);
       router.push("/customers");
       router.refresh();
     }

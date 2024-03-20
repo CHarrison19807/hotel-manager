@@ -30,9 +30,9 @@ import {
 import slugify from "slugify";
 import { createEmployee, deleteEmployee, updateEmployee } from "@/lib/employee";
 import { toast } from "sonner";
-import { isSelfOrManagerAtHotel } from "@/lib/user";
 import FormWrapper from "../FormWrapper";
 import { formatSIN } from "@/lib/utils";
+import { isManagerAtHotel, isSelf } from "@/lib/user";
 
 interface EmployeeFormProps {
   hotels: Hotel[];
@@ -41,6 +41,7 @@ interface EmployeeFormProps {
 
 const EmployeeForm = (props: EmployeeFormProps) => {
   const { hotels, employee } = props;
+
   const { full_name, address, sin, role, hotel_slug } = employee ?? {};
   const form: any = useForm<TEmployeeValidate>({
     defaultValues: {
@@ -59,12 +60,12 @@ const EmployeeForm = (props: EmployeeFormProps) => {
 
   const handleDelete = async (sin: string, hotel_slug: string) => {
     setIsLoading(true);
-    if (await isSelfOrManagerAtHotel(sin, hotel_slug)) {
+    if ((await isSelf(sin)) || (await isManagerAtHotel(hotel_slug))) {
       const result = await deleteEmployee(sin);
       if (result) {
         toast.error(result);
       } else {
-        toast.success(`Succesfully deleted employee!`);
+        toast.success(`Successfully deleted employee!`);
         router.push("/employees");
         router.refresh();
       }
@@ -79,7 +80,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
     const { full_name, address, sin, role, hotel_slug } = data;
     let result: string;
     if (employee) {
-      if (await isSelfOrManagerAtHotel(sin, employee.hotel_slug)) {
+      if ((await isSelf(sin)) || (await isManagerAtHotel(hotel_slug))) {
         result = await updateEmployee({
           full_name,
           address,
@@ -90,7 +91,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
         if (result) {
           toast.error(result);
         } else {
-          toast.success(`Succesfully updated employee!`);
+          toast.success(`Successfully updated employee!`);
           router.push("/employees");
           router.refresh();
         }
@@ -98,7 +99,8 @@ const EmployeeForm = (props: EmployeeFormProps) => {
         toast.error("You do not have permission to edit this employee.");
       }
     } else {
-      if (await isSelfOrManagerAtHotel(sin, hotel_slug)) {
+      // TODO: add check for if the hotel has no employees
+      if ((await isSelf(sin)) || (await isManagerAtHotel(hotel_slug))) {
         result = await createEmployee({
           full_name,
           address,
@@ -109,7 +111,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
         if (result) {
           toast.error(result);
         } else {
-          toast.success(`Succesfully created employee!`);
+          toast.success(`Successfully created employee!`);
           router.push("/employees");
           router.refresh();
         }

@@ -29,7 +29,7 @@ import {
 import slugify from "slugify";
 import { HotelChain } from "@/lib/hotelChain";
 import FormWrapper from "../FormWrapper";
-import { isManagerAtHotel2 } from "@/lib/user";
+import { isManagerAtHotel } from "@/lib/user";
 
 interface HotelFormProps {
   hotelChains: HotelChain[];
@@ -109,10 +109,7 @@ const HotelForm = (props: HotelFormProps) => {
       };
 
       if (
-        await isManagerAtHotel2(
-          slugify(hotel_name as string, { lower: true }),
-          chain_slug as string
-        )
+        await isManagerAtHotel(slugify(hotel_name as string, { lower: true }))
       ) {
         const result = await updateHotel(newHotel, hotel.hotel_name);
         if (result) {
@@ -138,10 +135,10 @@ const HotelForm = (props: HotelFormProps) => {
     setIsLoading(false);
   };
 
-  const handleDelete = async (hotel_slug: string, chain_slug: string) => {
+  const handleDelete = async (hotel_slug: string) => {
     setIsLoading(true);
-    if (await isManagerAtHotel2(hotel_slug, chain_slug)) {
-      const result = await deleteHotel(hotel_slug, chain_slug);
+    if (await isManagerAtHotel(hotel_slug)) {
+      const result = await deleteHotel(hotel_slug);
       if (result) {
         toast.error(result);
       } else {
@@ -338,9 +335,7 @@ const HotelForm = (props: HotelFormProps) => {
                 {hotel && (
                   <Button
                     type="button"
-                    onClick={() =>
-                      handleDelete(hotel_slug as string, chain_slug as string)
-                    }
+                    onClick={() => handleDelete(hotel_slug as string)}
                     disabled={isLoading}
                     variant="destructive"
                   >
