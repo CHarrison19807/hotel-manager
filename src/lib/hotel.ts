@@ -38,8 +38,8 @@ const createHotel = async (hotel: Hotel): Promise<string> => {
     const hotelSlug = slugify(hotel_name, { lower: true });
 
     const searchQuery =
-      "SELECT * FROM hotel WHERE (hotel_slug = $1 AND chain_slug = $2) OR (address = $3)";
-    const searchValues = [hotelSlug, chain_slug, address];
+      "SELECT * FROM hotel WHERE (hotel_slug = $1) OR (address = $2)";
+    const searchValues = [hotelSlug, address];
     const searchResult = await db.query(searchQuery, searchValues);
 
     if (searchResult.rows?.length > 0) {
@@ -102,18 +102,14 @@ const getChainHotels = async (chainSlug: string): Promise<Hotel[]> => {
 /**
  * Retrieves a single hotel from the database.
  * @param hotelName - The name of the hotel.
- * @param chainSlug - The slug of the chain.
  * @returns A promise that resolves to a Hotel object.
  */
-const getSingleHotel = async (
-  hotelName: string,
-  chainSlug: string
-): Promise<Hotel> => {
+const getSingleHotel = async (hotelName: string): Promise<Hotel> => {
   const db = await createDatabaseClient();
   await db.connect();
   const hotelSlug = slugify(hotelName, { lower: true });
-  const query = "SELECT * FROM hotel WHERE hotel_slug = $1 AND chain_slug = $2";
-  const values = [hotelSlug, chainSlug];
+  const query = "SELECT * FROM hotel WHERE hotel_slug = $1";
+  const values = [hotelSlug];
   const result = await db.query(query, values);
 
   await db.end();
@@ -145,7 +141,6 @@ const updateHotel = async (
     } = hotel;
     const previousHotelSlug = slugify(previousHotelName, { lower: true });
     if (previousHotelSlug === hotel_slug) {
-      console.log("same slug");
       const searchQuery =
         "SELECT * FROM hotel WHERE address = $1 AND hotel_slug != $2";
       const searchValues = [address, hotel_slug];
@@ -167,23 +162,21 @@ const updateHotel = async (
       await db.query(query, values);
     } else {
       const searchQueries = [
-        "SELECT * FROM hotel WHERE hotel_slug = $1 AND chain_slug = $2",
+        "SELECT * FROM hotel WHERE hotel_slug = $1",
         "SELECT * FROM hotel WHERE address = $1 AND hotel_slug != $2",
       ];
-      const searchValueOne = [hotel_slug, chain_slug];
+      const searchValueOne = [hotel_slug];
       const searchValueTwo = [address, previousHotelSlug];
       const searchResults = await Promise.all([
         db.query(searchQueries[0], searchValueOne),
         db.query(searchQueries[1], searchValueTwo),
       ]);
-      console.log(searchResults[0].rows, searchResults[1].rows);
       if (searchResults[0].rows?.length > 0) {
         return "Hotel with this name already exists!";
       }
       if (searchResults[1].rows?.length > 0) {
         return "Hotel with this address already exists!";
       }
-      console.log("different slug");
       const query =
         "UPDATE hotel SET hotel_slug = $1, hotel_name = $2, phone_numbers = $3, email_addresses = $4, address = $5, rating = $6 WHERE hotel_slug = $7 AND chain_slug = $8";
       const values = [
@@ -200,7 +193,6 @@ const updateHotel = async (
     }
     return "";
   } catch (error) {
-    console.error(error);
     return "Unexpected error occurred while updating hotel! Please try again.";
   } finally {
     await db.end();
@@ -213,17 +205,14 @@ const updateHotel = async (
  * @param chainSlug - The slug of the chain.
  * @returns A promise that resolves to an empty string if the hotel is deleted successfully, or an error message.
  */
-const deleteHotel = async (
-  hotelName: string,
-  chainSlug: string
-): Promise<string> => {
+const deleteHotel = async (hotelName: string): Promise<string> => {
   const db = await createDatabaseClient();
 
   try {
     await db.connect();
     const hotelSlug = slugify(hotelName, { lower: true });
-    const query = "DELETE FROM hotel WHERE hotel_slug = $1 AND chain_slug = $2";
-    const values = [hotelSlug, chainSlug];
+    const query = "DELETE FROM hotel WHERE hotel_slug = $1";
+    const values = [hotelSlug];
     await db.query(query, values);
   } catch (error) {
     return "Unexpected error occurred while deleting hotel! Please try again.";
