@@ -1,7 +1,51 @@
 import { type ClassValue, clsx } from "clsx";
-import { cookies } from "next/headers";
 import { twMerge } from "tailwind-merge";
 
+export const HOTEL_ROOM_DAMAGE_OPTIONS = [
+  "Broken window",
+  "Stained carpet",
+  "Damaged furniture",
+  "Leaking faucet",
+  "Cracked mirror",
+  "Clogged toilet",
+  "Torn curtains",
+  "Scratched walls",
+  "Faulty electrical wiring",
+  "Moldy bathroom",
+  "Broken showerhead",
+  "Water damage on ceiling",
+  "Missing light fixtures",
+  "Broken air conditioning",
+  "Damaged TV",
+  "Broken door lock",
+  "Noisy plumbing",
+  "Broken bed frame",
+  "Smashed glass",
+  "Damaged wallpaper",
+];
+export const HOTEL_ROOM_AMENITY_OPTIONS = [
+  "Free Wi-Fi",
+  "Complimentary Breakfast",
+  "Free Parking",
+  "Airport Shuttle",
+  "Concierge Service",
+  "24-Hour Front Desk",
+  "Business Center",
+  "Meeting Facilities",
+  "Free Newspaper",
+  "Room Service",
+  "Laundry Facilities",
+  "Fitness Center",
+  "Spa Services",
+  "Outdoor Terrace",
+  "Garden",
+  "Pet-Friendly",
+  "Non-Smoking Rooms",
+  "Accessible Rooms",
+  "Family Rooms",
+  "Childcare Services",
+  "Valet Parking",
+];
 /**
  * Combines multiple class names into a single string.
  * @param inputs - The class names to be combined.
