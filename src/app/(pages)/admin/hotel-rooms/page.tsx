@@ -1,10 +1,10 @@
 import columns from "@/components/HotelRooms/HotelRoomColumns";
 import DataTable from "@/components/DataTable";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getAllRooms } from "@/lib/hotelRoom";
+import { getAllHotelRooms } from "@/lib/hotelRoom";
 
 const ViewHotelRoomsAsEmployeePage = async () => {
-  const hotelRooms = await getAllRooms();
+  const hotelRooms = await getAllHotelRooms();
 
   return (
     <MaxWidthWrapper>

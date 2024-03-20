@@ -1,5 +1,4 @@
-import { getSingleHotel } from "@/lib/hotel";
-import { getSingleRoom } from "@/lib/hotelRoom";
+import { getSingleHotelRoom } from "@/lib/hotelRoom";
 import { notFound } from "next/navigation";
 
 interface HotelRoomProps {
@@ -11,13 +10,13 @@ interface HotelRoomProps {
 
 const IndividualHotelRoomPage = async ({ params }: HotelRoomProps) => {
   const { hotelNameSlug, roomNumber } = params;
-  const room = await getSingleRoom(hotelNameSlug, roomNumber);
+  const room = await getSingleHotelRoom(hotelNameSlug, roomNumber);
   if (!room) {
     notFound();
   }
   return (
     <div>
-      <h1>Room {room.room_number}</h1>
+      <h1>Room {room.roomNumber}</h1>
       <p>{room.price}</p>
     </div>
   );

@@ -1,21 +1,20 @@
-import CreateNew from "@/components/CreateNewItem";
 import HotelItem from "@/components/HotelItem";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getChainHotels, getSingleHotel } from "@/lib/hotel";
+import { getChainHotels } from "@/lib/hotel";
 import { getSingleHotelChain } from "@/lib/hotelChain";
 import { Hotel } from "@/lib/hotel";
 import { notFound } from "next/navigation";
 
 interface HotelChainProps {
   params: {
-    hotelChainNameSlug: string;
+    chainSlug: string;
   };
 }
 
 const HotelChainPage = async ({ params }: HotelChainProps) => {
-  const { hotelChainNameSlug } = params;
-  const hotels = await getChainHotels(hotelChainNameSlug);
-  const hotelChain = await getSingleHotelChain(hotelChainNameSlug);
+  const { chainSlug } = params;
+  const hotels = await getChainHotels(chainSlug);
+  const hotelChain = await getSingleHotelChain(chainSlug);
 
   if (!hotels || !hotelChain) {
     notFound();
@@ -30,12 +29,7 @@ const HotelChainPage = async ({ params }: HotelChainProps) => {
           All Hotels Part of {hotelChainName}
         </h1>
         <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6  ">
-          <CreateNew
-            href={`/${hotelChainNameSlug}/new`}
-            cta={`Create a New Hotel in ${hotelChainName}`}
-            description="Click the button above to create a new hotel!"
-          />
-          {hotels.map((hotel: hotel) => (
+          {hotels.map((hotel: Hotel) => (
             <HotelItem key={hotel.hotel_name} hotel={hotel} />
           ))}
         </div>
