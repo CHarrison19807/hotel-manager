@@ -1,6 +1,7 @@
 "use client";
 
-import { formatPhoneNumber, hotel_chain } from "@/lib/utils";
+import { HotelChain } from "@/lib/hotelChain";
+import { formatPhoneNumber } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,14 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEmployeeContext } from "@/contexts/EmployeeContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import slugify from "slugify";
 
-const HotelChainItem = ({ hotelChain }: { hotelChain: hotel_chain }) => {
-  const { isEmployee } = useEmployeeContext();
+const HotelChainItem = ({ hotelChain }: { hotelChain: HotelChain }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -75,29 +74,11 @@ const HotelChainItem = ({ hotelChain }: { hotelChain: hotel_chain }) => {
         </>
 
         <CardFooter className="flex justify-between">
-          {isEmployee && (
-            <>
-              <Button asChild variant="outline">
-                <Link
-                  href={"/" + slugify(chain_name, { lower: true }) + "/edit"}
-                >
-                  Edit Chain
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link href={"/" + slugify(chain_name, { lower: true })}>
-                  View Hotels
-                </Link>
-              </Button>
-            </>
-          )}
-          {!isEmployee && (
-            <Button asChild className="w-full">
-              <Link href={"/" + slugify(chain_name, { lower: true })}>
-                View Hotels
-              </Link>
-            </Button>
-          )}
+          <Button asChild className="w-full">
+            <Link href={"/" + slugify(chain_name, { lower: true })}>
+              View Hotels
+            </Link>
+          </Button>
         </CardFooter>
       </Card>
     );

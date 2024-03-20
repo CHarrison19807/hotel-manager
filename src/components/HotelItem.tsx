@@ -1,7 +1,8 @@
 "use client";
 
-import { useEmployeeContext } from "@/contexts/EmployeeContext";
-import { formatPhoneNumber, hotel } from "@/lib/utils";
+import { Hotel } from "@/lib/hotel";
+
+import { formatPhoneNumber } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -14,11 +15,11 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import Rating from "@mui/material/Rating";
-import slugify from "slugify";
 
-const HotelItem = ({ hotel }: { hotel: hotel }) => {
+const HotelItem = ({ hotel }: { hotel: Hotel }) => {
   const {
     hotel_name,
+    hotel_slug: hotelSlug,
     chain_slug,
     phone_numbers,
     email_addresses,
@@ -26,7 +27,7 @@ const HotelItem = ({ hotel }: { hotel: hotel }) => {
     rating,
     number_rooms,
   } = hotel;
-  const { isEmployee } = useEmployeeContext();
+
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -80,46 +81,9 @@ const HotelItem = ({ hotel }: { hotel: hotel }) => {
         </>
 
         <CardFooter className="flex justify-between">
-          {isEmployee && (
-            <>
-              <Button asChild variant="outline">
-                <Link
-                  href={
-                    "/" +
-                    chain_slug +
-                    "/" +
-                    slugify(hotel_name, { lower: true }) +
-                    "/edit"
-                  }
-                >
-                  Edit Hotel
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link
-                  href={
-                    "/" +
-                    chain_slug +
-                    "/" +
-                    slugify(hotel_name, { lower: true })
-                  }
-                >
-                  View Rooms
-                </Link>
-              </Button>
-            </>
-          )}
-          {!isEmployee && (
-            <Button asChild className="w-full">
-              <Link
-                href={
-                  "/" + chain_slug + "/" + slugify(hotel_name, { lower: true })
-                }
-              >
-                View Rooms
-              </Link>
-            </Button>
-          )}
+          <Button asChild className="w-full">
+            <Link href={"/" + chain_slug + "/" + hotelSlug}>View Rooms</Link>
+          </Button>
         </CardFooter>
       </Card>
     );
