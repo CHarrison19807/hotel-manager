@@ -9,14 +9,11 @@ export type Customer = {
   date_registered?: string;
 };
 
-const createCustomer = async ({
-  full_name,
-  address,
-  sin,
-}: Customer): Promise<string> => {
+const createCustomer = async (customer: Customer): Promise<string> => {
   const db = await createDatabaseClient();
 
   try {
+    const { full_name, address, sin } = customer;
     await db.connect();
 
     const searchQueries = [
@@ -76,15 +73,12 @@ const getCustomer = async (sin: string): Promise<Customer> => {
   return results.rows[0];
 };
 
-const updateCustomer = async ({
-  full_name,
-  address,
-  sin,
-}: Customer): Promise<string> => {
+const updateCustomer = async (customer: Customer): Promise<string> => {
   const db = await createDatabaseClient();
 
   try {
     await db.connect();
+    const { full_name, address, sin } = customer;
 
     const query =
       "UPDATE customer SET full_name = $1, address = $2 WHERE sin = $3;";

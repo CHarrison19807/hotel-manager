@@ -39,7 +39,7 @@ interface CustomerBookingFormProps {
 }
 const CustomerBookingForm = (props: CustomerBookingFormProps) => {
   const { hotelRoom, user, chainSlug, bookingDates } = props;
-  const { hotelSlug, roomNumber, price } = hotelRoom;
+  const { hotel_slug, room_number, price } = hotelRoom;
   const [totalCost, setTotalCost] = useState(0);
 
   let bookedDates: number[] = bookingDates
@@ -92,7 +92,7 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
     setIsLoading(true);
     if (!user) {
       router.push(
-        `/customers?origin=${chainSlug}/${hotelSlug}/${roomNumber}/book`
+        `/customers?origin=${chainSlug}/${hotel_slug}/${room_number}/book`
       );
       toast.error("You must be logged in to book a room!");
       setIsLoading(false);
@@ -100,8 +100,8 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
     }
     const newBooking = {
       ...data,
-      hotel_slug: hotelSlug,
-      room_number: roomNumber,
+      hotel_slug: hotel_slug,
+      room_number: room_number,
       total_cost: totalCost,
       customer_sin: user?.sin as string,
     };
@@ -117,7 +117,7 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
   };
 
   return (
-    <FormWrapper headerText={`Book room ${roomNumber}`}>
+    <FormWrapper headerText={`Book room ${room_number}`}>
       <div className="grid gap-6">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -196,9 +196,6 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onDayClick={(date) =>
-                            console.log(bookedDates.includes(date.getTime()))
-                          }
                           onSelect={field.onChange}
                           disabled={(date) =>
                             date <= form.getValues("check_in_date") ||

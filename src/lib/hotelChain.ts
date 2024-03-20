@@ -27,15 +27,12 @@ export type HotelChain = {
  * @param central_address - The central address of the hotel chain.
  * @returns A promise that resolves to an empty string if the hotel chain is created successfully, or an error message if an error occurs.
  */
-const createHotelChain = async ({
-  chain_name,
-  phone_numbers,
-  email_addresses,
-  central_address,
-}: HotelChain): Promise<string> => {
+const createHotelChain = async (hotelChain: HotelChain): Promise<string> => {
   const db = await createDatabaseClient();
 
   try {
+    const { chain_name, phone_numbers, email_addresses, central_address } =
+      hotelChain;
     await db.connect();
     const slug = slugify(chain_name, { lower: true });
 
@@ -106,16 +103,13 @@ const getSingleHotelChain = async (chainName: string): Promise<HotelChain> => {
  * @param central_address - The central address of the hotel chain.
  * @returns A promise that resolves to an empty string if the update is successful, or an error message if an error occurs.
  */
-const updateHotelChain = async ({
-  chain_name,
-  phone_numbers,
-  email_addresses,
-  central_address,
-}: HotelChain): Promise<string> => {
+const updateHotelChain = async (hotelChain: HotelChain): Promise<string> => {
   const db = await createDatabaseClient();
 
   try {
     await db.connect();
+    const { chain_name, phone_numbers, email_addresses, central_address } =
+      hotelChain;
     const slug = slugify(chain_name, { lower: true });
 
     const searchQuery =

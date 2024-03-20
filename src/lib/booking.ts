@@ -24,6 +24,7 @@ const createBooking = async (booking: Booking): Promise<string> => {
 
   try {
     const {
+      booking_id,
       customer_sin,
       hotel_slug,
       room_number,
@@ -42,8 +43,6 @@ const createBooking = async (booking: Booking): Promise<string> => {
       check_in_date,
       check_out_date
     );
-    console.log(booking);
-    console.log(bookings);
     for (const booking of bookings) {
       if (
         booking.hotel_slug === hotel_slug &&
@@ -53,21 +52,24 @@ const createBooking = async (booking: Booking): Promise<string> => {
       }
     }
 
-    let uniqueID = false;
-    let booking_id = "";
-    while (!uniqueID) {
-      booking_id = generateID();
-      const searchQuery = "SELECT * FROM booking WHERE booking_id = $1;";
+    let new_booking_id = "";
+    if (!booking_id) {
+      let uniqueID = false;
+      while (!uniqueID) {
+        new_booking_id = generateID();
+        const searchQuery = "SELECT * FROM booking WHERE booking_id = $1;";
 
-      const searchValues = [booking_id];
-      const results = await db.query(searchQuery, searchValues);
-      if (results.rows.length === 0) {
-        uniqueID = true;
+        const searchValues = [new_booking_id];
+        const results = await db.query(searchQuery, searchValues);
+        if (results.rows.length === 0) {
+          uniqueID = true;
+        }
       }
     }
+
     const query = `INSERT INTO booking (booking_id, customer_sin, hotel_slug, room_number, check_in_date, check_out_date, total_cost) VALUES ($1, $2, $3, $4, $5, $6, $7);`;
     const values = [
-      booking_id,
+      booking_id ? booking_id : new_booking_id,
       customer_sin,
       hotel_slug,
       room_number,

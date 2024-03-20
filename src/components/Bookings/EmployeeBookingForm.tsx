@@ -175,7 +175,6 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
     }
     setIsLoading(false);
   };
-  console.log(hotels);
   return (
     <FormWrapper headerText={booking ? "Edit Booking" : "Create Booking"}>
       <div className="grid gap-6">
