@@ -53,6 +53,9 @@ const UserAccountMenu = (props: UserAccountMenuProps) => {
               </div>
             </div>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/admin">Employee dashboard</Link>
+            </DropdownMenuItem>
           </>
         ) : (
           <DropdownMenuItem asChild>
