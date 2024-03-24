@@ -52,6 +52,15 @@ const HotelRoomColumns: ColumnDef<HotelRoom>[] = [
     accessorFn: (row) => (row.extended ? "Yes" : "No"),
   },
   {
+    header: "View",
+    accessorKey: "view",
+    cell: ({ row }) => {
+      const view: string = row.getValue("view");
+      const final = view.charAt(0).toUpperCase() + view.slice(1);
+      return final;
+    },
+  },
+  {
     header: "Capacity",
     accessorKey: "capacity",
     cell: ({ row }) => {

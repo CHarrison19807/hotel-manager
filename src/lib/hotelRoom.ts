@@ -11,6 +11,7 @@ export type HotelRoom = {
   occupied?: boolean;
   extended: boolean;
   capacity: "single" | "double" | "suite";
+  view: "pool" | "city" | "mountain" | "ocean" | "garden";
 };
 
 const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
@@ -26,6 +27,7 @@ const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       occupied,
       extended,
       capacity,
+      view,
     } = hotelRoom;
 
     const searchQuery =
@@ -38,7 +40,7 @@ const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
     }
 
     const query =
-      "INSERT INTO hotel_room (room_number, hotel_slug, price, damages, amenities, occupied, extended, capacity) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+      "INSERT INTO hotel_room (room_number, hotel_slug, price, damages, amenities, occupied, extended, capacity, view) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
     const values = [
       room_number,
       hotel_slug,
@@ -48,6 +50,7 @@ const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       occupied ?? false,
       extended,
       capacity,
+      view,
     ];
     await db.query(query, values);
   } catch (error) {
@@ -107,6 +110,7 @@ const updateHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       occupied,
       extended,
       capacity,
+      view,
     } = hotelRoom;
 
     const searchQuery =
@@ -118,7 +122,7 @@ const updateHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       return "A hotel room with the same room number already exists.";
     }
     const query =
-      "UPDATE hotel_room SET price = $3, damages = $4, amenities = $5, extended = $6, capacity = $7 WHERE room_number = $1 AND hotel_slug = $2";
+      "UPDATE hotel_room SET price = $3, damages = $4, amenities = $5, extended = $6, capacity = $7, view = $8 WHERE room_number = $1 AND hotel_slug = $2";
     const values = [
       room_number,
       hotel_slug,
@@ -127,6 +131,7 @@ const updateHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       amenities,
       extended,
       capacity,
+      view,
     ];
     await db.query(query, values);
   } catch (error) {

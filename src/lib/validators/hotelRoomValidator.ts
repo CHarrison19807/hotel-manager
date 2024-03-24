@@ -15,6 +15,7 @@ export const HotelRoomValidator = z
     amenities: z.array(z.string()).optional(),
     extended: z.boolean(),
     capacity: z.enum(["single", "double", "suite"]),
+    view: z.enum(["garden", "ocean", "city", "mountain", "pool"]),
   })
   .superRefine((data, ctx) => {
     console.log(data);

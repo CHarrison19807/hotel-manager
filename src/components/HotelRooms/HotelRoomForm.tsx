@@ -69,6 +69,7 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
     room_number,
     amenities,
     damages,
+    view,
   } = hotelRoom ?? {};
 
   const form: UseFormReturn<THotelRoomValidator> = useForm<THotelRoomValidator>(
@@ -79,6 +80,7 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
         hotel_slug,
         // @ts-expect-error
         price: price ?? "",
+        view,
         // @ts-expect-error
         room_number: room_number ?? "",
         amenities,
@@ -332,6 +334,31 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
                         <SelectItem value="single">Single</SelectItem>
                         <SelectItem value="double">Double</SelectItem>
                         <SelectItem value="suite">Suite</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="capacity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>View</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={view}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a view" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="city">City</SelectItem>
+                        <SelectItem value="garden">Garden</SelectItem>
+                        <SelectItem value="mountain">Mountain</SelectItem>
+                        <SelectItem value="ocean">Ocean</SelectItem>
+                        <SelectItem value="pool">Pool</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
