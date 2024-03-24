@@ -38,16 +38,14 @@ const HotelChainForm = (props: HotelChainFormProps) => {
 
   const form = useForm<THotelChainValidate>({
     defaultValues: {
-      chain_name,
-      phone_numbers,
-      email_addresses,
-      central_address,
+      chain_name: chain_name || "",
+      central_address: central_address || "",
     },
     resolver: zodResolver(HotelChainValidate),
   });
 
   const initialPhoneNumberCount = phone_numbers?.length || 1;
-  const initialEmailAddressCount = phone_numbers?.length || 1;
+  const initialEmailAddressCount = email_addresses?.length || 1;
 
   const phoneNumberArray = Array.from(
     { length: initialPhoneNumberCount },
@@ -72,16 +70,22 @@ const HotelChainForm = (props: HotelChainFormProps) => {
   const handleRemovePhoneNumber = () => {
     const index = phoneCount[phoneCount.length - 1];
     if (phoneCount.length > 1) setPhoneCount(phoneCount.slice(0, -1));
-    form.resetField(`phone_numbers.${index}`);
+    form.unregister(`phone_numbers.${index}`);
+    form.setValue(
+      `phone_numbers`,
+      form.getValues().phone_numbers.filter((_, i) => i !== index)
+    );
   };
 
   const handleRemoveEmailAddress = () => {
     const index = emailCount[emailCount.length - 1];
     if (emailCount.length > 1) setEmailCount(emailCount.slice(0, -1));
-    form.resetField(`email_addresses.${index}`);
+    form.unregister(`email_addresses.${index}`);
+    form.setValue(
+      `email_addresses`,
+      form.getValues().email_addresses.filter((_, i) => i !== index)
+    );
   };
-
-  const { handleSubmit, control } = form;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -163,10 +167,10 @@ const HotelChainForm = (props: HotelChainFormProps) => {
       </div>
       <div className="grid gap-6">
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-2">
               <FormField
-                control={control}
+                control={form.control}
                 name="chain_name"
                 render={({ field }) => (
                   <FormItem>
@@ -175,7 +179,6 @@ const HotelChainForm = (props: HotelChainFormProps) => {
                       <Input
                         placeholder="Hotel Chain Name"
                         {...field}
-                        value={chain_name}
                         disabled={hotelChain ? true : false}
                       />
                     </FormControl>
@@ -186,9 +189,10 @@ const HotelChainForm = (props: HotelChainFormProps) => {
               {phoneCount.map((index: number) => {
                 return (
                   <FormField
-                    control={control}
+                    control={form.control}
                     key={phoneCount[index]}
                     name={`phone_numbers.${index}`}
+                    defaultValue={phone_numbers ? phone_numbers[index] : ""}
                     render={({ field }) => {
                       return (
                         <FormItem>
@@ -206,9 +210,10 @@ const HotelChainForm = (props: HotelChainFormProps) => {
               {emailCount.map((index: number) => {
                 return (
                   <FormField
-                    control={control}
+                    control={form.control}
                     key={emailCount[index]}
                     name={`email_addresses.${index}`}
+                    defaultValue={email_addresses ? email_addresses[index] : ""}
                     render={({ field }) => {
                       return (
                         <FormItem>
@@ -224,7 +229,7 @@ const HotelChainForm = (props: HotelChainFormProps) => {
                 );
               })}
               <FormField
-                control={control}
+                control={form.control}
                 name="central_address"
                 render={({ field }) => (
                   <FormItem>
