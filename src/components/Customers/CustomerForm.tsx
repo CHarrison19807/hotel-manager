@@ -63,7 +63,7 @@ const CustomerForm = (props: CustomerFormProps) => {
         router.refresh();
       }
     } else {
-      toast.error("You do not have permission to delete this customer.");
+      toast.error("You are not authorized to perform this action!");
     }
     setIsLoading(false);
   };
@@ -105,11 +105,7 @@ const CustomerForm = (props: CustomerFormProps) => {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="John Smith"
-                        {...field}
-                        value={full_name}
-                      />
+                      <Input placeholder="John Smith" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,11 +118,7 @@ const CustomerForm = (props: CustomerFormProps) => {
                   <FormItem>
                     <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="123 Main St"
-                        {...field}
-                        value={address}
-                      />
+                      <Input placeholder="123 Main St" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

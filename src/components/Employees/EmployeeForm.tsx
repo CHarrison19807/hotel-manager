@@ -70,7 +70,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
         router.refresh();
       }
     } else {
-      toast.error("You do not have permission to delete this employee.");
+      toast.error("You are not authorized to perform this action!");
     }
     setIsLoading(false);
   };
@@ -96,7 +96,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
           router.refresh();
         }
       } else {
-        toast.error("You do not have permission to edit this employee.");
+        toast.error("You are not authorized to perform this action!");
       }
     } else {
       // TODO: add check for if the hotel has no employees
@@ -116,7 +116,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
           router.refresh();
         }
       } else {
-        toast.error("You do not have permission to create this employee.");
+        toast.error("You are not authorized to perform this action!");
       }
     }
     setIsLoading(false);
