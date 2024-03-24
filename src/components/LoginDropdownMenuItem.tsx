@@ -5,7 +5,7 @@ import { Customer } from "@/lib/customer";
 import { setUser } from "@/lib/user";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const LoginDropdownMenuItem = (user: Employee | Customer, href: string) => {
+const LoginDropdownMenuItem = (user: Employee | Customer) => {
   const router = useRouter();
   const origin = useSearchParams().get("origin");
   return (

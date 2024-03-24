@@ -3,15 +3,9 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
 import { FaHotel } from "react-icons/fa";
 import { getServerSideUser } from "@/lib/user";
-import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import LogoutDropdownMenuItem from "./LogoutDropdownMenuItem";
+import UserAccountMenu from "./UserAccountMenu";
+import MobileNav from "./MobileNav";
+import LoginDropdownMenu from "./LoginDropdownMenu";
 
 const Navbar = async () => {
   const user = await getServerSideUser();
@@ -21,49 +15,42 @@ const Navbar = async () => {
       <header className="relative bg-white">
         <MaxWidthWrapper>
           <div className="border-b border-gray-200">
-            <div className="flex h-16 items-center">
-              <div className="flex justify-between w-full">
-                <div className="ml-4 flex lg:ml-0">
-                  <Button asChild variant="link" className="text-black">
-                    <Link href="/" className="flex items-center gap-4">
-                      <FaHotel className="h-10 w-10" />
-                      <p className="font-bold text-2xl hidden sm:block">
-                        HotelHub
-                      </p>
-                    </Link>
+            <div className="flex h-16 items-center justify-between">
+              <MobileNav />
+              <div className="ml-4 flex lg:ml-0">
+                <Button asChild variant="ghost" className="text-black py-6">
+                  <Link href="/" className="flex items-center gap-4">
+                    <FaHotel className="h-10 w-10" />
+                    <p className="font-bold text-2xl">DreamStay</p>
+                  </Link>
+                </Button>
+                <div className="lg:gap-1 font-medium items-center py-1 hidden lg:flex">
+                  <Button variant="ghost">
+                    <Link href="/all/hotel-chains">Hotel Chains</Link>
+                  </Button>
+                  <Button variant="ghost">
+                    <Link href="/all/hotels">Hotels</Link>
+                  </Button>
+                  <Button variant="ghost">
+                    <Link href="/all/hotel-rooms">Hotel Rooms</Link>
                   </Button>
                 </div>
+              </div>
+              <div className="lg:ml-auto">
                 {user ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="overflow-visible">
-                      <Button variant="ghost" size="sm" className="relative">
-                        My account
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent className="bg-white w-60" align="end">
-                      <div className="flex items-center justify-start gap-2 p-2">
-                        <div className="flex flex-col space-y-0.5 leading-none">
-                          <p className="font-medium text-sm text-black">
-                            {user.full_name}
-                          </p>
-                        </div>
-                      </div>
-
-                      <DropdownMenuSeparator />
-
-                      <LogoutDropdownMenuItem />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <UserAccountMenu user={user} />
                 ) : (
-                  <div className="flex gap-3">
-                    <Button>
-                      <Link href="/employees">Login as employee</Link>
-                    </Button>
-                    <Button>
-                      <Link href="/customers">Login as customer</Link>
-                    </Button>
-                  </div>
+                  <>
+                    <LoginDropdownMenu />
+                    <div className="lg:flex gap-3 hidden">
+                      <Button>
+                        <Link href="/employees">Login as employee</Link>
+                      </Button>
+                      <Button>
+                        <Link href="/customers">Login as customer</Link>
+                      </Button>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
