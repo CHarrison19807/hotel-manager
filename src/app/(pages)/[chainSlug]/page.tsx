@@ -1,9 +1,9 @@
-import HotelItem from "@/components/HotelItem";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { getChainHotels } from "@/lib/hotel";
 import { getSingleHotelChain } from "@/lib/hotelChain";
 import { Hotel } from "@/lib/hotel";
 import { notFound } from "next/navigation";
+import HotelItem from "@/components/Hotels/HotelItem";
 
 interface HotelChainProps {
   params: {

@@ -1,7 +1,7 @@
 import { getAllHotelChains } from "@/lib/hotelChain";
 import { HotelChain } from "@/lib/hotelChain";
-import HotelChainItem from "@/components/HotelChainItem";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import HotelChainItem from "@/components/HotelChains/HotelChainItem";
 
 export default async function Home() {
   const hotelChains = await getAllHotelChains();
