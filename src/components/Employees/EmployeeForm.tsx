@@ -32,7 +32,7 @@ import { createEmployee, deleteEmployee, updateEmployee } from "@/lib/employee";
 import { toast } from "sonner";
 import FormWrapper from "../FormWrapper";
 import { formatSIN } from "@/lib/utils";
-import { isManagerAtHotel, isSelf } from "@/lib/user";
+import { isManagerAtHotel, isSelf, setUser } from "@/lib/user";
 
 interface EmployeeFormProps {
   hotels: Hotel[];
@@ -79,15 +79,31 @@ const EmployeeForm = (props: EmployeeFormProps) => {
     setIsLoading(true);
     const { full_name, address, sin, role, hotel_slug } = data;
     let result: string;
+    const newEmployee = {
+      full_name,
+      address,
+      sin,
+      role,
+      hotel_slug,
+    };
     if (employee) {
-      if ((await isSelf(sin)) || (await isManagerAtHotel(hotel_slug))) {
-        result = await updateEmployee({
-          full_name,
-          address,
-          sin,
-          role,
-          hotel_slug,
-        });
+      if (await isSelf(sin)) {
+        if (role === "manager" && !(await isManagerAtHotel(hotel_slug))) {
+          toast.error("You are not authorized to perform this action!");
+          setIsLoading(false);
+          return;
+        }
+        result = await updateEmployee(newEmployee);
+        if (result) {
+          toast.error(result);
+        } else {
+          await setUser(newEmployee);
+          toast.success(`Successfully updated employee!`);
+          router.push("/employees");
+          router.refresh();
+        }
+      } else if (await isManagerAtHotel(hotel_slug)) {
+        result = await updateEmployee(newEmployee);
         if (result) {
           toast.error(result);
         } else {

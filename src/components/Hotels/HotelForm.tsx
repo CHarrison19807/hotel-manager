@@ -29,12 +29,20 @@ import {
 import slugify from "slugify";
 import { HotelChain } from "@/lib/hotelChain";
 import FormWrapper from "../FormWrapper";
-import { isManagerAtHotel } from "@/lib/user";
+import {
+  getServerSideUser,
+  isManagerAtHotel,
+  logoutUser,
+  setUser,
+} from "@/lib/user";
+import { time } from "console";
+import { Employee } from "@/lib/employee";
 
 interface HotelFormProps {
   hotelChains: HotelChain[];
   hotel?: Hotel;
 }
+
 const HotelForm = (props: HotelFormProps) => {
   const { hotel, hotelChains } = props;
   const {
@@ -49,12 +57,10 @@ const HotelForm = (props: HotelFormProps) => {
 
   const form = useForm<THotelValidate>({
     defaultValues: {
-      hotel_name,
-      phone_numbers,
-      email_addresses,
-      address,
+      hotel_name: hotel_name || "",
+      address: address || "",
       rating,
-      chain_slug,
+      chain_slug: chain_slug || "",
     },
     resolver: zodResolver(hotelValidate),
   });
@@ -85,13 +91,21 @@ const HotelForm = (props: HotelFormProps) => {
   const handleRemovePhoneNumber = () => {
     const index = phoneCount[phoneCount.length - 1];
     if (phoneCount.length > 1) setPhoneCount(phoneCount.slice(0, -1));
-    form.resetField(`phone_numbers.${index}`);
+    form.unregister(`phone_numbers.${index}`);
+    form.setValue(
+      `phone_numbers`,
+      form.getValues().phone_numbers.filter((_, i) => i !== index)
+    );
   };
 
   const handleRemoveEmailAddress = () => {
     const index = emailCount[emailCount.length - 1];
     if (emailCount.length > 1) setEmailCount(emailCount.slice(0, -1));
-    form.resetField(`email_addresses.${index}`);
+    form.unregister(`email_addresses.${index}`);
+    form.setValue(
+      `email_addresses`,
+      form.getValues().email_addresses.filter((_, i) => i !== index)
+    );
   };
 
   const { handleSubmit, control } = form;
@@ -116,11 +130,19 @@ const HotelForm = (props: HotelFormProps) => {
           toast.error(result);
         } else {
           toast.success("Hotel Updated Successfully!");
+          if (hotel.hotel_name !== newHotel.hotel_name) {
+            const user: Employee = (await getServerSideUser()) as Employee;
+            const newUser: Employee = {
+              ...user,
+              hotel_slug: newHotel.hotel_slug,
+            };
+            await setUser(newUser as Employee);
+          }
           router.push("/admin/hotels");
           router.refresh();
         }
       } else {
-        toast.error("You are not authorized to update this hotel!");
+        toast.error("You are not authorized to perform this action!");
       }
     } else {
       const result = await createHotel(data);
@@ -135,10 +157,10 @@ const HotelForm = (props: HotelFormProps) => {
     setIsLoading(false);
   };
 
-  const handleDelete = async (hotel_slug: string) => {
+  const handleDelete = async () => {
     setIsLoading(true);
-    if (await isManagerAtHotel(hotel_slug)) {
-      const result = await deleteHotel(hotel_slug);
+    if (await isManagerAtHotel(hotel_slug as string)) {
+      const result = await deleteHotel(hotel_slug as string);
       if (result) {
         toast.error(result);
       } else {
@@ -147,7 +169,7 @@ const HotelForm = (props: HotelFormProps) => {
         router.refresh();
       }
     } else {
-      toast.error("You are not authorized to delete this hotel");
+      toast.error("You are not authorized to perform this action!");
     }
     setIsLoading(false);
   };
@@ -273,6 +295,7 @@ const HotelForm = (props: HotelFormProps) => {
                     control={control}
                     key={phoneCount[index]}
                     name={`phone_numbers.${index}`}
+                    defaultValue={phone_numbers ? phone_numbers[index] : ""}
                     render={({ field }) => {
                       return (
                         <FormItem>
@@ -293,6 +316,7 @@ const HotelForm = (props: HotelFormProps) => {
                     control={control}
                     key={emailCount[index]}
                     name={`email_addresses.${index}`}
+                    defaultValue={email_addresses ? email_addresses[index] : ""}
                     render={({ field }) => {
                       return (
                         <FormItem>
@@ -335,7 +359,7 @@ const HotelForm = (props: HotelFormProps) => {
                 {hotel && (
                   <Button
                     type="button"
-                    onClick={() => handleDelete(hotel_slug as string)}
+                    onClick={() => handleDelete()}
                     disabled={isLoading}
                     variant="destructive"
                   >
