@@ -142,7 +142,6 @@ const updateHotelChain = async (hotelChain: HotelChain): Promise<string> => {
  * @param chainName - The name of the hotel chain to delete.
  * @returns A promise that resolves to an empty string if the deletion is successful, or an error message if an error occurs.
  */
-// TODO: fix error when deleting hotel chain with hotel referenced by booking table
 const deleteHotelChain = async (chainName: string): Promise<string> => {
   const db = await createDatabaseClient();
 

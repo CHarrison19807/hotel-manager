@@ -83,7 +83,7 @@ const EmployeeColumns: ColumnDef<Employee>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`employees/${employee.sin}`}>Edit employee</Link>
+              <Link href={`/employees/${employee.sin}`}>Edit employee</Link>
             </DropdownMenuItem>
             <LoginDropdownMenuItem
               full_name={full_name}

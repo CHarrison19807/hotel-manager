@@ -56,12 +56,14 @@ const UserAccountMenu = (props: UserAccountMenuProps) => {
           </>
         ) : (
           <DropdownMenuItem asChild>
-            <Link href={`user/${user.sin}/bookings`}>My bookings</Link>
+            <Link href={`/user/${user.sin}/bookings`}>My bookings</Link>
           </DropdownMenuItem>
         )}
 
         <DropdownMenuItem asChild>
-          <Link href={role ? `employees/${user.sin}` : `customers/${user.sin}`}>
+          <Link
+            href={role ? `/employees/${user.sin}` : `/customers/${user.sin}`}
+          >
             Edit profile
           </Link>
         </DropdownMenuItem>

@@ -78,7 +78,7 @@ const CustomerColumns: ColumnDef<Customer>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`customers/${sin}`}>Edit customer</Link>
+              <Link href={`/customers/${sin}`}>Edit customer</Link>
             </DropdownMenuItem>
             <LoginDropdownMenuItem
               full_name={full_name}

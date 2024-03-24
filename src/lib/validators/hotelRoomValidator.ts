@@ -18,7 +18,6 @@ export const HotelRoomValidator = z
     view: z.enum(["garden", "ocean", "city", "mountain", "pool"]),
   })
   .superRefine((data, ctx) => {
-    console.log(data);
     const { damages, amenities } = data;
     if (damages) {
       damages.map((damage, index) => {
@@ -52,7 +51,6 @@ export const HotelRoomValidator = z
             });
           }
         }
-        console.log(amenities[index]);
         if (amenities[index] === "") {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
