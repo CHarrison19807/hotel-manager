@@ -9,14 +9,14 @@ export type Booking = {
   customer_sin: string;
   hotel_slug: string;
   room_number: number;
-  check_in_date: Date;
-  check_out_date: Date;
+  check_in: Date;
+  check_out: Date;
   total_cost: number;
 };
 
 export type BookedDates = {
-  check_in_date: Date;
-  check_out_date: Date;
+  check_in: Date;
+  check_out: Date;
 };
 
 const createBooking = async (booking: Booking): Promise<string> => {
@@ -28,8 +28,8 @@ const createBooking = async (booking: Booking): Promise<string> => {
       customer_sin,
       hotel_slug,
       room_number,
-      check_in_date,
-      check_out_date,
+      check_in,
+      check_out,
       total_cost,
     } = booking;
     await db.connect();
@@ -39,10 +39,7 @@ const createBooking = async (booking: Booking): Promise<string> => {
       return "There is no room with that number in the hotel!";
     }
 
-    const bookings = await getBookingsBetweenDates(
-      check_in_date,
-      check_out_date
-    );
+    const bookings = await getBookingsBetweenDates(check_in, check_out);
     for (const booking of bookings) {
       if (
         booking.hotel_slug === hotel_slug &&
@@ -67,14 +64,14 @@ const createBooking = async (booking: Booking): Promise<string> => {
       }
     }
 
-    const query = `INSERT INTO booking (booking_id, customer_sin, hotel_slug, room_number, check_in_date, check_out_date, total_cost) VALUES ($1, $2, $3, $4, $5, $6, $7);`;
+    const query = `INSERT INTO booking (booking_id, customer_sin, hotel_slug, room_number, check_in, check_out, total_cost) VALUES ($1, $2, $3, $4, $5, $6, $7);`;
     const values = [
       booking_id ? booking_id : new_booking_id,
       customer_sin,
       hotel_slug,
       room_number,
-      check_in_date,
-      check_out_date,
+      check_in,
+      check_out,
       total_cost,
     ];
     await db.query(query, values);
@@ -98,14 +95,14 @@ const getAllBookings = async (): Promise<Booking[]> => {
 };
 
 const getBookingsBetweenDates = async (
-  check_in_date: Date,
-  check_out_date: Date
+  check_in: Date,
+  check_out: Date
 ): Promise<Booking[]> => {
   const db = await createDatabaseClient();
   await db.connect();
   const query =
-    "SELECT * FROM booking WHERE (check_in_date >= $1 AND check_in_date <= $2) OR (check_out_date <= $2 AND check_out_date >= $1);";
-  const values = [check_in_date, check_out_date];
+    "SELECT * FROM booking WHERE (check_in >= $1 AND check_in <= $2) OR (check_out <= $2 AND check_out >= $1);";
+  const values = [check_in, check_out];
   const results = await db.query(query, values);
   await db.end();
   return results.rows;
@@ -115,7 +112,7 @@ const getBookedDates = async (room_number: number, hotel_slug: string) => {
   const db = await createDatabaseClient();
   await db.connect();
   const query =
-    "SELECT check_in_date, check_out_date FROM booking WHERE room_number = $1 AND hotel_slug = $2;";
+    "SELECT check_in, check_out FROM booking WHERE room_number = $1 AND hotel_slug = $2;";
   const values = [room_number, hotel_slug];
   const results = await db.query(query, values);
   await db.end();
@@ -141,17 +138,17 @@ const updateBooking = async (booking: Booking): Promise<string> => {
       customer_sin,
       hotel_slug,
       room_number,
-      check_in_date,
-      check_out_date,
+      check_in,
+      check_out,
       total_cost,
     } = booking;
-    const query = `UPDATE booking SET customer_sin = $1, hotel_slug = $2, room_number = $3, check_in_date = $4, check_out_date = $5, total_cost = $6 WHERE booking_id = $7;`;
+    const query = `UPDATE booking SET customer_sin = $1, hotel_slug = $2, room_number = $3, check_in = $4, check_out = $5, total_cost = $6 WHERE booking_id = $7;`;
     const values = [
       customer_sin,
       hotel_slug,
       room_number,
-      check_in_date,
-      check_out_date,
+      check_in,
+      check_out,
       total_cost,
       booking_id,
     ];

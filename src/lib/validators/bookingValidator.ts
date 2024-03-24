@@ -8,11 +8,11 @@ export const EmployeeBookingValidator = z
       .number({ invalid_type_error: "Enter a valid room number!" })
       .int("Enter a valid room number!")
       .min(1, "Enter a valid room number!"),
-    check_in_date: z.date(),
-    check_out_date: z.date(),
+    check_in: z.date(),
+    check_out: z.date(),
   })
   .refine((data) => {
-    if (data.check_in_date > data.check_out_date) {
+    if (data.check_in > data.check_out) {
       throw new Error("Check in date must be before check out date!");
     }
     return true;
@@ -20,11 +20,11 @@ export const EmployeeBookingValidator = z
 
 export const CustomerBookingValidator = z
   .object({
-    check_in_date: z.date(),
-    check_out_date: z.date(),
+    check_in: z.date(),
+    check_out: z.date(),
   })
   .refine((data) => {
-    if (data.check_in_date > data.check_out_date) {
+    if (data.check_in > data.check_out) {
       throw new Error("Check in date must be before check out date!");
     }
     return true;

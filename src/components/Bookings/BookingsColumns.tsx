@@ -51,9 +51,9 @@ const BookingColumns: ColumnDef<Booking>[] = [
         </Button>
       );
     },
-    accessorKey: "check_in_date",
+    accessorKey: "check_in",
     cell: ({ row }) => {
-      const original: string = row.getValue("check_in_date");
+      const original: string = row.getValue("check_in");
       const final: string = new Date(original).toDateString();
       return final;
     },
@@ -70,9 +70,9 @@ const BookingColumns: ColumnDef<Booking>[] = [
         </Button>
       );
     },
-    accessorKey: "check_out_date",
+    accessorKey: "check_out",
     cell: ({ row }) => {
-      const original: string = row.getValue("check_out_date");
+      const original: string = row.getValue("check_out");
       const final: string = new Date(original).toDateString();
       return final;
     },

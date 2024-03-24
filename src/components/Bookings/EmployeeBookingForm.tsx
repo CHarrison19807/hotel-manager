@@ -62,8 +62,8 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
     customer_sin,
     hotel_slug,
     room_number,
-    check_in_date,
-    check_out_date,
+    check_in,
+    check_out,
   } = booking ?? {};
 
   const form: UseFormReturn<TEmployeeBookingValidator> =
@@ -72,8 +72,8 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
         customer_sin,
         hotel_slug,
         room_number,
-        check_in_date,
-        check_out_date,
+        check_in,
+        check_out,
       },
       resolver: zodResolver(EmployeeBookingValidator),
     });
@@ -86,11 +86,11 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
 
   const evaluateTotalCost = (
     hotel_room: HotelRoom,
-    check_in_date: Date,
-    check_out_date: Date
+    check_in: Date,
+    check_out: Date
   ): number => {
     const days = Math.ceil(
-      (check_out_date.getTime() - check_in_date.getTime()) / (1000 * 3600 * 24)
+      (check_out.getTime() - check_in.getTime()) / (1000 * 3600 * 24)
     );
     return days * hotel_room.price;
   };
@@ -110,8 +110,8 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
         }
         const total_cost = evaluateTotalCost(
           hotelRoom,
-          data.check_in_date,
-          data.check_out_date
+          data.check_in,
+          data.check_out
         );
         const booking: Booking = { ...data, total_cost };
         let result = await updateBooking(booking);
@@ -135,8 +135,8 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
         }
         const total_cost = evaluateTotalCost(
           hotelRoom,
-          data.check_in_date,
-          data.check_out_date
+          data.check_in,
+          data.check_out
         );
         const booking: Booking = { ...data, total_cost };
         let result = await createBooking(booking);
@@ -171,7 +171,7 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
         router.refresh();
       }
     } else {
-      toast.error("You are not authorized to delete a booking at this hotel!");
+      toast.error("You are not authorized to perform this action!");
     }
     setIsLoading(false);
   };
@@ -348,7 +348,7 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
 
               <FormField
                 control={form.control}
-                name="check_in_date"
+                name="check_in"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Check in date</FormLabel>
@@ -378,7 +378,7 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
                           onSelect={field.onChange}
                           disabled={(date) =>
                             date < new Date() ||
-                            date >= form.getValues("check_out_date")
+                            date >= form.getValues("check_out")
                           }
                           initialFocus
                         />
@@ -392,7 +392,7 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
 
               <FormField
                 control={form.control}
-                name="check_out_date"
+                name="check_out"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Check out date</FormLabel>
@@ -421,7 +421,7 @@ const EmployeeBookingForm = (props: EmployeeBookingFormProps) => {
                           selected={field.value}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date <= form.getValues("check_in_date") ||
+                            date <= form.getValues("check_in") ||
                             date > new Date("2030-01-01")
                           }
                           initialFocus
