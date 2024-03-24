@@ -12,14 +12,16 @@ export const hotelValidate = z
     phone_numbers: z.array(
       z.string().min(10, { message: "Enter a valid phone number!" })
     ),
-    email_addresses: z.array(z.string().email()),
+    email_addresses: z.array(
+      z.string().email({ message: "Enter a valid email!" })
+    ),
     address: z
       .string()
       .min(1, { message: "Address can not be empty!" })
       .max(24, {
         message: "Address can not be longer than 24 characters!",
       }),
-    rating: z.coerce.number().int().min(1, { message: "Select a rating!" }),
+    rating: z.coerce.number({ invalid_type_error: "Select a rating!" }),
     chain_slug: z.string().min(1, { message: "Select a hotel chain!" }),
   })
   .superRefine((data, ctx) => {
