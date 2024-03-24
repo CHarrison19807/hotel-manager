@@ -108,6 +108,18 @@ const getBookingsBetweenDates = async (
   return results.rows;
 };
 
+const getCustomerBookings = async (
+  customer_sin: string
+): Promise<Booking[]> => {
+  const db = await createDatabaseClient();
+  await db.connect();
+  const query = "SELECT * FROM booking WHERE customer_sin = $1;";
+  const values = [customer_sin];
+  const results = await db.query(query, values);
+  await db.end();
+  return results.rows;
+};
+
 const getBookedDates = async (room_number: number, hotel_slug: string) => {
   const db = await createDatabaseClient();
   await db.connect();
@@ -161,6 +173,7 @@ const updateBooking = async (booking: Booking): Promise<string> => {
   }
   return "";
 };
+
 const deleteBooking = async (booking_id: string): Promise<string> => {
   const db = await createDatabaseClient();
 
@@ -181,6 +194,7 @@ const deleteBooking = async (booking_id: string): Promise<string> => {
 export {
   createBooking,
   getAllBookings,
+  getCustomerBookings,
   getBooking,
   getBookedDates,
   getBookingsBetweenDates,
