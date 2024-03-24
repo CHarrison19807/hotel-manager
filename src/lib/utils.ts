@@ -79,24 +79,14 @@ export function formatPhoneNumber(phoneNumberString: string): string | null {
 /**
  * Formats a price value into a specific currency format.
  * @param price - The price value to be formatted.
- * @param options - The formatting options including currency and notation.
  * @returns The formatted price as a string.
  */
-export const formatPrice = (
-  price: number | string,
-  options: {
-    currency?: "USD" | "EUR" | "GBP" | "BDT";
-    notation?: Intl.NumberFormatOptions["notation"];
-  } = {}
-): string => {
-  const { currency = "USD", notation = "compact" } = options;
-
+export const formatPrice = (price: number | string): string => {
   const numericPrice = typeof price === "string" ? parseFloat(price) : price;
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-CA", {
     style: "currency",
-    currency,
-    notation,
+    currency: "CAD",
     maximumFractionDigits: 2,
   }).format(numericPrice);
 };
