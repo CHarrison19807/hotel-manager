@@ -12,6 +12,7 @@ const ViewCustomersPage = async () => {
         <DataTable
           columns={CustomerColumns}
           data={customers}
+          action={true}
           actionHref="/customers/new"
           actionText="Create Customer"
           filter={true}

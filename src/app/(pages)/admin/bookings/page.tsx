@@ -12,10 +12,11 @@ const ViewBookingsPage = async () => {
         <DataTable
           columns={BookingColumns}
           data={bookings}
+          action={true}
           actionHref="/bookings/new"
           actionText="Create Booking"
           filter={true}
-          filterPlaceholder="Filter by hotels..."
+          filterPlaceholder="Filter by hotel..."
           filterColumn="hotel"
         />
       </div>

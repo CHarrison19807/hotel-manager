@@ -11,10 +11,11 @@ const ViewEmployeesPage = async () => {
         <DataTable
           columns={EmployeeColumns}
           data={employees}
+          action={true}
           actionHref="/employees/new"
           actionText="Create Employee"
           filter={true}
-          filterPlaceholder="Filter by hotels..."
+          filterPlaceholder="Filter by hotel..."
           filterColumn="hotel"
         />
       </div>

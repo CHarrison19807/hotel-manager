@@ -12,6 +12,7 @@ const ViewHotelsAsEmployeePage = async () => {
         <DataTable
           columns={columns}
           data={hotels}
+          action={true}
           actionHref="/admin/hotels/new"
           actionText="Create Hotel"
           filter={true}

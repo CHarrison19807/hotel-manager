@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Input } from "./ui/input";
 import {
@@ -27,29 +27,38 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { unIDify } from "@/lib/utils";
 import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  actionText: string;
-  actionHref: string;
+  action: boolean;
+  actionText?: string;
+  actionHref?: string;
   filter: boolean;
-  filterPlaceholder: string;
-  filterColumn: string;
+  filterPlaceholder?: string;
+  filterColumn?: string;
 }
 
 const DataTable = <TData, TValue>({
   columns,
   data,
+  action,
   actionText,
   actionHref,
   filter,
   filterPlaceholder,
   filterColumn,
 }: DataTableProps<TData, TValue>) => {
+  if (filter && (!filterColumn || !filterPlaceholder)) {
+    throw new Error("filterColumn and filterPlaceholder are required.");
+  }
+  if (action && (!actionHref || !actionText)) {
+    throw new Error("actionHref and actionText are required.");
+  }
+
   const [sorting, setSorting] = useState<any>([]);
   const [columnFilters, setColumnFilters] = useState<any>([]);
   const [columnVisibility, setColumnVisibility] = useState<any>({});
@@ -72,21 +81,25 @@ const DataTable = <TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center py-4">
         {filter && (
           <Input
             placeholder={filterPlaceholder}
             value={
-              (table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""
+              (table
+                .getColumn(filterColumn as string)
+                ?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
-              table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+              table
+                .getColumn(filterColumn as string)
+                ?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
         )}
 
-        <div className="flex ml-5">
+        <div className="flex ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="hidden md:flex">
@@ -113,9 +126,13 @@ const DataTable = <TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link className="ml-5" href={actionHref}>
-            <Button>{actionText}</Button>
-          </Link>
+          {action && (
+            <Button asChild>
+              <Link className="ml-5" href={actionHref as string}>
+                {actionText}
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
 
