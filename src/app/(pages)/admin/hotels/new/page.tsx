@@ -1,12 +1,12 @@
-import HotelRoomForm from "@/components/HotelRooms/HotelRoomForm";
+import HotelForm from "@/components/Hotels/HotelForm";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { getAllHotels } from "@/lib/hotel";
+import { getAllHotelChains } from "@/lib/hotelChain";
 
 const CreateNewHotelPage = async () => {
-  const hotels = await getAllHotels();
+  const hotelChains = await getAllHotelChains();
   return (
     <MaxWidthWrapper>
-      <HotelRoomForm hotels={hotels} />
+      <HotelForm hotelChains={hotelChains} />
     </MaxWidthWrapper>
   );
 };
