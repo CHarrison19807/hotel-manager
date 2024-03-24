@@ -99,7 +99,7 @@ export const formatPrice = (price: number | string): string => {
 export const unslugify = (slug: string): string => {
   let words = slug.split("-");
   words = words.map((word) => {
-    if (word.length < 4) return word;
+    if (word.length < 3) return word;
 
     return word.charAt(0).toUpperCase() + word.slice(1);
   });
