@@ -10,10 +10,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import Rating from "@mui/material/Rating";
 
 const HotelItem = ({ hotel }: { hotel: Hotel }) => {
@@ -36,51 +36,49 @@ const HotelItem = ({ hotel }: { hotel: Hotel }) => {
 
   if (isVisible && hotel) {
     return (
-      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
-        <>
-          <CardHeader>
-            <div className="flex justify-between">
-              <CardTitle>{hotel_name}</CardTitle>
-              <Rating name="read-only" value={rating} readOnly />
+      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px] flex flex-col">
+        <CardHeader>
+          <div className="flex justify-between">
+            <CardTitle>{hotel_name}</CardTitle>
+            <Rating name="read-only" value={rating} readOnly />
+          </div>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <p>{address}</p>
+            <p>{number_rooms} Rooms</p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between gap-2">
+            <div className="flex flex-col gap-1">
+              <div>Email addresses</div>
+              <ul>
+                {email_addresses.map((email) => (
+                  <li
+                    className="text-muted-foreground text-sm pb-1"
+                    key={email}
+                  >
+                    {email}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <p>{address}</p>
-              <p>{number_rooms} Rooms</p>
+            <div className="flex flex-col text-right gap-1 shrink-0">
+              <p>Phone numbers</p>
+              <ul>
+                {phone_numbers.map((phone) => (
+                  <li
+                    className="text-muted-foreground text-sm pb-1"
+                    key={phone}
+                  >
+                    {formatPhoneNumber(phone)}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between gap-2">
-              <div className="flex flex-col gap-1">
-                <div>Email addresses</div>
-                <ul>
-                  {email_addresses.map((email) => (
-                    <li
-                      className="text-muted-foreground text-sm pb-1"
-                      key={email}
-                    >
-                      {email}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-col text-right gap-1 shrink-0">
-                <p>Phone numbers</p>
-                <ul>
-                  {phone_numbers.map((phone) => (
-                    <li
-                      className="text-muted-foreground text-sm pb-1"
-                      key={phone}
-                    >
-                      {formatPhoneNumber(phone)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </>
+          </div>
+        </CardContent>
 
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between mt-auto">
           <Button asChild className="w-full">
             <Link href={"/" + chain_slug + "/" + hotelSlug}>View Rooms</Link>
           </Button>
@@ -94,9 +92,12 @@ const HotelItem = ({ hotel }: { hotel: Hotel }) => {
 
 const HotelPlaceholder = () => {
   return (
-    <Card className="w-[400px]">
+    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
       <div className=" flex flex-col gap-1 p-5">
-        <Skeleton className="h-8 w-3/5" />
+        <div className="flex justify-between pt-1">
+          <Skeleton className="h-8 w-1/2" />
+          <Skeleton className="h-8 w-1/3" />
+        </div>
         <div className="flex justify-between pt-1">
           <Skeleton className="h-5 w-1/2" />
           <Skeleton className="h-5 w-1/4" />

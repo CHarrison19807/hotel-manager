@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import slugify from "slugify";
 
 const HotelChainItem = ({ hotelChain }: { hotelChain: HotelChain }) => {
@@ -29,51 +29,48 @@ const HotelChainItem = ({ hotelChain }: { hotelChain: HotelChain }) => {
     email_addresses,
     number_hotels,
   } = hotelChain;
-  // TODO: VERTICAL DISPLAY OF PHONE NUMBERS AND EMAILS ON MOBILE
   if (isVisible && hotelChain) {
     return (
-      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
-        <>
-          <CardHeader>
-            <CardTitle>{chain_name}</CardTitle>
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <p>{central_address}</p>
-              <p>{number_hotels} Hotels</p>
+      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px] flex-col flex">
+        <CardHeader>
+          <CardTitle>{chain_name}</CardTitle>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <p>{central_address}</p>
+            <p>{number_hotels} Hotels</p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between gap-2">
+            <div className="flex flex-col gap-1">
+              <div>Email addresses</div>
+              <ul>
+                {email_addresses.map((email) => (
+                  <li
+                    className="text-muted-foreground text-sm pb-1"
+                    key={email}
+                  >
+                    {email}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between gap-2">
-              <div className="flex flex-col gap-1">
-                <div>Email addresses</div>
-                <ul>
-                  {email_addresses.map((email) => (
-                    <li
-                      className="text-muted-foreground text-sm pb-1"
-                      key={email}
-                    >
-                      {email}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-col text-right gap-1 shrink-0">
-                <p>Phone numbers</p>
-                <ul>
-                  {phone_numbers.map((phone) => (
-                    <li
-                      className="text-muted-foreground text-sm pb-1"
-                      key={phone}
-                    >
-                      {formatPhoneNumber(phone)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="flex flex-col text-right gap-1 shrink-0">
+              <p>Phone numbers</p>
+              <ul>
+                {phone_numbers.map((phone) => (
+                  <li
+                    className="text-muted-foreground text-sm pb-1"
+                    key={phone}
+                  >
+                    {formatPhoneNumber(phone)}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </CardContent>
-        </>
+          </div>
+        </CardContent>
 
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between mt-auto">
           <Button asChild className="w-full">
             <Link href={"/" + slugify(chain_name, { lower: true })}>
               View Hotels
@@ -91,7 +88,7 @@ export default HotelChainItem;
 
 const HotelChainPlaceholder = () => {
   return (
-    <Card className="w-[400px]">
+    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
       <div className=" flex flex-col gap-1 p-5">
         <Skeleton className="h-8 w-3/5" />
         <div className="flex justify-between pt-1">
