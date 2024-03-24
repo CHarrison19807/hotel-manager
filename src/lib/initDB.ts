@@ -1,366 +1,1302 @@
 import slugify from "slugify";
-import { createDatabaseClient } from "./database";
+import { Employee, createEmployee } from "./employee";
+import { Customer, createCustomer } from "./customer";
+import { HotelRoom, createHotelRoom } from "./hotelRoom";
+import { Booking, createBooking } from "./booking";
+import {
+  HOTEL_ROOM_AMENITY_OPTIONS,
+  HOTEL_ROOM_DAMAGE_OPTIONS,
+  generateID,
+} from "./utils";
+import { Hotel, createHotel } from "./hotel";
+import { HotelChain, createHotelChain } from "./hotelChain";
 
 // Run this file with the following command:
 // npx ts-node --skip-project src/lib/initDB.ts
-
-const dummyHotelChains = [
-  {
-    chain_name: "Hilton",
-    phone_numbers: ["1234567890", "0987654321"],
-    email_addresses: ["hilton@email.com", "email@hilton.com"],
-    central_address: "123 Hilton St",
-  },
-  {
-    chain_name: "Marriott",
-    phone_numbers: ["1111111111", "2222222222"],
-    email_addresses: ["marriott@email.com", "email@marriott.com"],
-    central_address: "456 Marriott St",
-  },
-  {
-    chain_name: "Accor",
-    phone_numbers: ["3333333333", "4444444444"],
-    email_addresses: ["accor@email.com", "email@accor.com"],
-    central_address: "789 Accor St",
-  },
-  {
-    chain_name: "InterContinental",
-    phone_numbers: ["5555555555", "6666666666"],
-    email_addresses: [
-      "intercontinental@email.com",
-      "email@intercontinental.com",
-    ],
-    central_address: "987 InterContinental St",
-  },
-  {
-    chain_name: "Hyatt",
-    phone_numbers: ["7777777777", "8888888888"],
-    email_addresses: ["hyatt@email.com", "email@hyatt.com"],
-    central_address: "654 Hyatt St",
-  },
+const names: string[] = [
+  "Ansley",
+  "Sheila",
+  "Don",
+  "Ali",
+  "Lesli",
+  "Alysha",
+  "Immanuel",
+  "Clarissa",
+  "Colin",
+  "Santana",
+  "Gideon",
+  "Betty",
+  "Jacinda",
+  "Jasmyn",
+  "Glen",
+  "Kurt",
+  "August",
+  "Bonnie",
+  "Farrah",
+  "Roy",
+  "Shantel",
+  "Madalyn",
+  "Jasmyne",
+  "Chantal",
+  "Callie",
+  "Abriana",
+  "Zavier",
+  "Julian",
+  "Mauricio",
+  "Dean",
+  "Matthew",
+  "Aubree",
+  "Pauline",
+  "Darrell",
+  "Jackson",
+  "Rashawn",
+  "Macy",
+  "Leonel",
+  "Galen",
+  "Colby",
+  "Alani",
+  "Alton",
+  "Elvin",
+  "Dayanara",
+  "Lacy",
+  "Darien",
+  "Danae",
+  "Luz",
+  "Jorden",
+  "Salena",
+  "Caylin",
+  "Mitchell",
+  "Violet",
+  "Moses",
+  "Bernard",
+  "Rasheed",
+  "Latrell",
+  "Hazel",
+  "Jovan",
+  "Stormy",
+  "Yesica",
+  "Sidney",
+  "Loren",
+  "Presley",
+  "Nevin",
+  "Josh",
+  "Alicia",
+  "Armando",
+  "Mariano",
+  "Ulises",
+  "Tyrone",
+  "Ervin",
+  "Mercy",
+  "Daysha",
+  "Alysa",
+  "Rylee",
+  "Prince",
+  "Sincere",
+  "Lorena",
+  "Aidan",
+  "Devonte",
+  "Pierce",
+  "Allison",
+  "Elizabeth",
+  "Hali",
+  "Jaden",
+  "Eric",
+  "Clayton",
+  "Sydney",
+  "Shelbie",
+  "Ezequiel",
+  "Lucero",
+  "Dayton",
+  "Aiden",
+  "Treasure",
+  "Haden",
+  "Dan",
+  "Danika",
+  "Darrin",
+  "Heriberto",
+  "Liberty",
+  "Chelsey",
+  "Graham",
+  "Citlali",
+  "Demarcus",
+  "Katerina",
+  "Brandyn",
+  "Daisy",
+  "Drew",
+  "Gracelyn",
+  "Xiomara",
+  "Luciano",
+  "Ciana",
+  "Whitley",
+  "Brendan",
+  "Eunice",
+  "Reginald",
+  "Marisol",
+  "Jefferson",
+  "Jayson",
+  "Kenan",
+  "Vicky",
+  "Maverick",
+  "Henry",
+  "Iyana",
+  "Jenifer",
+  "Coby",
+  "Chana",
+  "Rosalinda",
+  "Dalila",
+  "Sonya",
+  "Tyreek",
+  "Lucinda",
+  "Lara",
+  "Amy",
+  "Keyshawn",
+  "Gene",
+  "Daniel",
+  "Betsy",
+  "Susan",
+  "Latavia",
+  "Jesus",
+  "Lisa",
+  "Shelton",
+  "Yaritza",
+  "Jimmie",
+  "Norman",
+  "Meaghan",
+  "Jayce",
+  "Tristian",
+  "Brookelyn",
+  "Ebony",
+  "Sheyla",
+  "Augustine",
+  "Darcy",
+  "Konnor",
+  "Irma",
+  "Zara",
+  "Jacklyn",
+  "Mariela",
+  "Parker",
+  "Tatianna",
+  "Christin",
+  "Jaxson",
+  "Kevon",
+  "Frances",
+  "Ivette",
+  "Jarrod",
+  "Raven",
+  "Amara",
+  "Tasha",
+  "Anne",
+  "Albert",
+  "Deisy",
+  "Lucia",
+  "Natali",
+  "Julianne",
+  "Ashtyn",
+  "Ximena",
+  "Gage",
+  "Cedrick",
+  "Elisa",
+  "Adelaide",
+  "Demetrius",
+  "Maci",
+  "Nash",
+  "Barry",
+  "Lilia",
+  "Brooklyn",
+  "Raymond",
+  "Keshon",
+  "Arianna",
+  "Andre",
+  "Dalton",
+  "Daquan",
+  "Adam",
+  "Darion",
+  "Nigel",
+  "Pilar",
+  "Hakeem",
+  "Amber",
+  "Malorie",
+  "Daniella",
+  "Andrew",
+  "Christiana",
+  "Iliana",
+  "Cristal",
+  "Beyonce",
+  "Jeffrey",
+  "Destiny",
+  "Dylan",
+  "Ishmael",
+  "Trenten",
+  "Rose",
+  "Siena",
+  "Liliana",
+  "Meg",
+  "Jaxon",
+  "Claudio",
+  "Penelope",
+  "Andres",
+  "Gissel",
+  "Thea",
+  "Bailey",
+  "Darrien",
+  "Zoey",
+  "Amina",
+  "Kelvin",
+  "Kelly",
+  "Kaylah",
+  "Harry",
+  "Issac",
+  "Brook",
+  "Danielle",
+  "Kenzie",
+  "Erick",
+  "Jude",
+  "Nautica",
+  "Leon",
+  "Shelbi",
+  "Ashlin",
+  "Kaela",
+  "Mackenzi",
+  "Devan",
+  "Kaylynn",
+  "Geneva",
+  "Nikolas",
+  "Marie",
+  "Tomas",
+  "James",
+  "Monique",
+  "Konner",
+  "Brannon",
+  "Hernan",
+  "Marquis",
+  "Jenny",
+  "Lyric",
+  "Dusty",
+  "Kya",
+  "Darryl",
+  "Byron",
+  "Eliana",
+  "Koby",
+  "Melina",
+  "Hugh",
+  "Pamela",
+  "Grayson",
+  "Shlomo",
+  "Karl",
+  "Britton",
+  "Precious",
+  "Jaret",
+  "Litzy",
+  "Antoinette",
+  "Lyle",
+  "Leonard",
+  "Marcelo",
+  "Caden",
+  "Amos",
+  "Khadijah",
+  "Rodrigo",
+  "Joe",
+  "Laisha",
+  "Quincy",
+  "Rayven",
+  "Alexandra",
+  "Ariella",
+  "Dayne",
+  "Moriah",
+  "Mindy",
+  "Raelyn",
+  "Blair",
+  "Junior",
+  "Ashton",
+  "Kristyn",
+  "Kent",
+  "Bryon",
+  "Sophia",
+  "Yasmine",
+  "Connor",
+  "Jarod",
+  "Alannah",
+  "Baby",
+  "Shanna",
+  "Aysha",
+  "Jaylyn",
+  "Keshawn",
+  "Octavio",
+  "Dejah",
+  "Ryan",
+  "Miguelangel",
+  "Garrett",
+  "Candy",
+  "Keyanna",
+  "Cailey",
+  "Vance",
+  "Megan",
+  "Leroy",
+  "Lexi",
+  "Theodore",
+  "Amani",
+  "Hans",
+  "Jayna",
+  "Ananda",
+  "River",
+  "Ania",
+  "Kaleb",
+  "Luna",
+  "Jacob",
+  "Libby",
+  "Alivia",
+  "Freddy",
+  "Clifford",
+  "Sophie",
+  "Bobbi",
+  "Melvin",
+  "Jaycee",
+  "Rodolfo",
+  "Trent",
+  "Greta",
+  "Lyndsey",
+  "Audrey",
+  "Rudy",
+  "Mykayla",
+  "Luc",
+  "Charlize",
+  "Kassie",
+  "Caleb",
+  "Freddie",
+  "Trenton",
+  "Emely",
+  "Russell",
+  "Lionel",
+  "Jayla",
+  "Sofia",
+  "Kole",
+  "Angeles",
+  "Hayli",
+  "Tommy",
+  "Logan",
+  "Tanner",
+  "Maryam",
+  "Kristal",
+  "Ty",
+  "Madeleine",
+  "Ahmad",
+  "Skyler",
+  "Alecia",
+  "Kenny",
+  "Addison",
+  "Danyelle",
+  "Leighton",
+  "Yisroel",
+  "Olga",
+  "Davonte",
+  "Ryann",
+  "Warren",
+  "Hillary",
+  "Infant",
+  "Cori",
+  "Alec",
+  "Piper",
+  "Nathen",
+  "Moira",
+  "Anton",
+  "Abagail",
+  "Gillian",
+  "Gabrielle",
+  "Mari",
+  "Jalen",
+  "Aurora",
+  "Riley",
+  "Anjali",
+  "Shira",
+  "Johnathon",
+  "Alice",
+  "Edwin",
+  "Anastasia",
+  "Rhys",
+  "Marisa",
+  "Keaton",
+  "Danny",
+  "Nicolette",
+  "Makenzie",
+  "Erin",
+  "Zachariah",
+  "Duncan",
+  "Alvin",
+  "Keandre",
+  "Herbert",
+  "Brady",
+  "Killian",
+  "Tiffani",
+  "Kaytlyn",
+  "Cesar",
+  "Maleah",
+  "Tyanna",
+  "Chase",
+  "Summer",
+  "Chloe",
+  "Mae",
+  "Calli",
+  "Douglas",
+  "Jalyn",
+  "Jayden",
+  "Leanne",
+  "Amari",
+  "Kobie",
+  "Lester",
+  "Asya",
+  "Alesha",
+  "Elena",
+  "Emiliano",
+  "Mattie",
+  "Jakob",
+  "Nathanial",
+  "Adrien",
+  "Lilly",
+  "Orlando",
+  "Luisa",
+  "Javier",
+  "Gia",
+  "Christion",
+  "Cornelius",
+  "Annette",
+  "Aaron",
+  "Dustin",
+  "Izaiah",
+  "Keara",
+  "Kristian",
+  "Chantel",
+  "Dylon",
+  "Bernardo",
+  "Leslie",
+  "Kaliyah",
+  "Tre",
+  "Camryn",
+  "Ivana",
+  "Carl",
+  "Daphne",
+  "Dario",
+  "Kade",
+  "Kyra",
+  "Alondra",
+  "Avery",
+  "Jaydon",
+  "Elise",
+  "Kevin",
+  "Selena",
+  "Larissa",
+  "Jennie",
+  "Jacy",
+  "Clare",
+  "Abigale",
+  "Davis",
+  "Declan",
+  "Alexandria",
+  "Stacy",
+  "Olivia",
+  "Clara",
+  "Dale",
+  "Irvin",
+  "Willow",
+  "Bryan",
+  "Sandra",
+  "Daron",
+  "Miranda",
+  "Carrie",
+  "Carter",
+  "Josefina",
+  "Mikaila",
+  "Amir",
+  "Analise",
+  "Kinsey",
+  "Alexis",
+  "Brieanna",
+  "Angelo",
+  "Darwin",
+  "Sonny",
+  "Darby",
+  "Catherine",
+  "Alysia",
+  "Mitchel",
+  "Rowan",
+  "Briza",
+  "Jacquelyn",
+  "Jonathon",
+  "Darlene",
+  "Kristin",
+  "Sterling",
+  "Reynaldo",
+  "Julie",
+  "Cydney",
+  "Kali",
+  "Desean",
+  "Rayshawn",
+  "Geovanni",
+  "Arlene",
+  "Deanna",
+  "Nelson",
+  "Makala",
+  "Keagan",
+  "Jaida",
+  "Dillion",
+  "Esmeralda",
+  "Tiffany",
+  "Deangelo",
+  "Nancy",
+  "Mya",
+  "Jamie",
+  "Yessenia",
+  "Tabatha",
+  "Jaidyn",
+  "Kain",
+  "Joseluis",
+  "Keelan",
+  "Asher",
+  "Ammon",
+  "Bethanie",
+  "Mathew",
+  "Estevan",
+  "Breann",
+  "Rafael",
+  "Dania",
+  "Mikel",
+  "Cooper",
+  "Simon",
+  "Carmen",
+  "Salvador",
+  "Yousef",
+  "Breeanna",
+  "Ilana",
+  "Shivani",
+  "Johnson",
+  "Jordin",
+  "Amia",
+  "Evan",
+  "Kathy",
+  "Tyreese",
+  "Abram",
+  "Earl",
+  "Jaime",
+  "Travis",
+  "Isabela",
+  "Taj",
+  "Alexus",
+  "Jaiden",
+  "Tavian",
+  "Samson",
+  "Celeste",
+  "Felicity",
+  "Jaylan",
+  "Brandi",
+  "Joaquin",
+  "Micah",
+  "Shea",
+  "Kayleen",
+  "Dimitri",
+  "Notnamed",
+  "Stewart",
+  "Martina",
+  "Dion",
+  "Jaquan",
+  "Quintin",
+  "Hezekiah",
+  "Reilly",
+  "Armani",
+  "Xochitl",
+  "Annmarie",
+  "Nolan",
+  "Levi",
+  "Grace",
+  "Norma",
+  "Gladys",
+  "Mira",
+  "Denver",
+  "Jarvis",
+  "Citlalli",
+  "Adela",
+  "Cristopher",
+  "Jamari",
+  "Annie",
+  "Rhonda",
+  "Marcela",
+  "Wyatt",
+  "Karson",
+  "Chaz",
+  "Trayvon",
+  "Reagan",
+  "Hasan",
+  "Britany",
+  "Mckinley",
+  "Gina",
+  "Jessalyn",
+  "Vera",
+  "Ezekiel",
+  "Tamya",
+  "Stefan",
+  "Josie",
+  "Jonah",
+  "Jaelynn",
+  "Wade",
+  "Wayne",
+  "Kerrigan",
+  "Rodney",
+  "Barbara",
+  "Kameron",
+  "Shaylee",
+  "Mikayla",
+  "Syed",
+  "Liza",
+  "Jaquelyn",
+  "Evelin",
+  "Daniela",
+  "Joy",
+  "Shayla",
+  "Kelton",
+  "Barrett",
+  "Mackenzie",
+  "Ayleen",
+  "Arnold",
+  "Casey",
+  "Ingrid",
+  "Bryanna",
+  "Guy",
+  "Jacqueline",
+  "Marcos",
+  "Magali",
+  "Araceli",
+  "Ally",
+  "Daryl",
+  "Kendell",
+  "Krysta",
+  "Rachel",
+  "Kaylyn",
+  "Janet",
+  "Jami",
+  "Jamil",
+  "Dawn",
+  "Rashad",
+  "Cherokee",
+  "Hollie",
+  "Jodi",
+  "Trystan",
+  "Emilee",
+  "Hector",
+  "Jovanni",
+  "Zakary",
+  "Calvin",
+  "Liam",
+  "Dariana",
+  "Savanna",
+  "Jaylen",
+  "Abdul",
+  "Paris",
+  "Pearl",
+  "Magaly",
+  "Bill",
+  "Winston",
+  "Robert",
+  "Lina",
+  "Katlin",
+  "Asa",
+  "Jaelyn",
+  "Alayna",
+  "Kahlil",
+  "Jericho",
+  "Ira",
+  "Julissa",
+  "Deondre",
+  "Janiya",
+  "Rhianna",
+  "Wilfredo",
+  "Gilberto",
+  "Carlo",
+  "Destiney",
+  "Alonzo",
+  "Alaina",
+  "Karime",
+  "Yareli",
+  "Randy",
+  "Cheyenne",
+  "Tyriq",
+  "Aimee",
+  "Yusuf",
+  "Jerod",
+  "Titus",
+  "Rico",
+  "Kimberly",
+  "Ashleigh",
+  "Nathaly",
+  "Randolph",
+  "Sky",
+  "Terrell",
+  "Braydon",
+  "Donnie",
+  "Alea",
+  "Shae",
+  "Lacey",
+  "Remington",
+  "Nickolas",
+  "Arleth",
+  "Daja",
+  "Darian",
+  "Devin",
+  "Weston",
+  "Braedon",
+  "Frederick",
+  "Cody",
+  "Magdalena",
+  "Esperanza",
+  "Kerry",
+  "Divya",
+  "Jessie",
+  "Kearra",
+  "Hudson",
+  "Jordon",
+  "Edgardo",
+  "Rileigh",
+  "Carolina",
+  "Ericka",
+  "Ulysses",
+  "Darrius",
+  "Michelle",
+  "Juancarlos",
+  "Nicholas",
+  "Kyler",
+  "Davon",
+  "Nick",
+  "Humberto",
+  "Tahj",
+  "Herman",
+  "Reed",
+  "Kane",
+  "Kailee",
+  "Yehuda",
+  "Jazmyne",
+  "Kendra",
+  "Paloma",
+  "Rick",
+  "Valery",
+  "Lila",
+  "Keegan",
+  "Julio",
+  "Ruben",
+  "Duane",
+  "Eleazar",
+  "Felix",
+  "Candace",
+  "Erich",
+  "Gerardo",
+  "Milena",
+  "Kaelyn",
+  "Lana",
+  "Hunter",
+  "Tyson",
+  "Saige",
+  "Autumn",
+  "Morgan",
+  "Abrianna",
+  "Treyton",
+  "Jocelyn",
+  "Tristan",
+  "Elisha",
+  "Hailey",
+  "Hailie",
+  "Chelsea",
+  "Ariel",
+  "Giovanna",
+  "Lindsey",
+  "Maxine",
+  "Bryana",
+  "Gabriela",
+  "Hayden",
+  "Yazmin",
+  "Kimberlee",
+  "Nallely",
+  "Diego",
+  "Sebastien",
+  "Cortez",
+  "Ryland",
+  "Katharine",
+  "Juana",
+  "Yazmine",
+  "Paulina",
+  "Anabel",
+  "Elyssa",
+  "Coleton",
+  "Antwan",
+  "Joyce",
+  "Layne",
+  "Bella",
+  "Briley",
+  "Linsey",
+  "Kenia",
+  "Vincent",
+  "Emmalee",
+  "Lela",
+  "Jackeline",
+  "Regan",
+  "Emerson",
+  "Katelin",
+  "Nathalie",
+  "Blanca",
+  "Juanita",
+  "Stone",
+  "Jakobe",
+  "Elaina",
+  "Jordan",
+  "Dangelo",
+  "Arturo",
+  "Kiya",
+  "Neo",
+  "Kennedi",
+  "Kellie",
+  "Stacey",
+  "Dakoda",
+  "Katelynn",
+  "Breanna",
+  "Alisha",
+  "Gunner",
+  "Sydnee",
+  "Jalil",
+  "Juan",
+  "Cristofer",
+  "Jonatan",
+  "Kerri",
+  "Frankie",
+  "Michele",
+  "Tony",
+  "Chassidy",
+  "Sean",
+  "Jamarcus",
+  "Gloria",
+  "Fallon",
+  "Davion",
+  "Lisette",
+  "Phoebe",
+  "Zahra",
+  "Baylor",
+  "Annika",
+  "Elle",
+  "Graciela",
+  "Alia",
+  "Jayme",
+  "Raekwon",
+  "Kenya",
+  "Kristina",
+  "Ginger",
+  "Kai",
+  "Kirstin",
+  "Mykala",
+  "Ernest",
+  "Tracy",
+  "Paxton",
+  "Kiah",
+  "Caitlin",
+  "Mia",
+  "Alyson",
+  "Mickayla",
+  "Lorraine",
+  "Taryn",
+  "Miracle",
+  "Markell",
+  "Shirley",
+  "Rigoberto",
+  "Georgina",
+  "Maiya",
+  "Juliana",
+  "Alexys",
+  "Harold",
+  "Frank",
+  "Darrian",
+  "Jovanny",
+  "Domonique",
+  "Jay",
+  "Brooklynn",
+  "Cristian",
+  "Janice",
+  "Tyshawn",
+  "Emanuel",
+  "Esther",
+  "Francisca",
+  "Ignacio",
+  "Klarissa",
+  "Alyssia",
+  "Alberto",
+  "Arjun",
+  "Geoffrey",
+  "Francis",
+  "Jovani",
+  "Johan",
+  "Anjelica",
+  "Ainsley",
+  "Brisa",
+  "Alan",
+  "Marla",
+  "Aden",
+  "Jameson",
+  "Larry",
+  "Carina",
+  "Brennon",
+  "Mauro",
+  "Charlene",
+  "Zain",
+  "Noah",
+  "Luke",
+  "Kellen",
+  "Tavion",
+  "America",
+  "Allissa",
+  "Brionna",
+  "Cora",
+  "Abner",
+  "Tierra",
+  "Tori",
+  "Braulio",
+  "Zion",
+  "Misael",
+  "Maureen",
+  "Bo",
+  "Chad",
+  "Mohammad",
+  "Katlynn",
+  "Dequan",
+  "Brenton",
+  "Evelyn",
+  "Kathryn",
+  "Astrid",
+  "Johnna",
+  "Kian",
+  "Katheryn",
+  "Preston",
+  "Kegan",
+  "Scarlett",
+  "Shana",
+  "Corrina",
+  "Wilson",
+  "Truman",
+  "Colton",
+  "Victor",
+  "Caylee",
+  "Zachery",
+  "Vernon",
+  "Wesley",
+  "Sade",
+  "Kyree",
+  "Bilal",
+  "Oriana",
+  "Dajah",
+  "Deborah",
+  "Shyanne",
+  "Deven",
+  "Jenna",
+  "Teresa",
+  "Edmund",
+  "Jabari",
+  "Estrella",
+  "Franco",
+  "Justine",
+  "Kendrick",
+  "Alma",
+  "Kaylen",
+  "Camille",
+  "Clifton",
+  "Jesenia",
+  "Garrison",
+  "Angela",
+  "Jena",
+  "Felicia",
+  "Branden",
+  "Kylee",
+  "Josiah",
+  "Luiz",
+  "Genevieve",
+  "Iman",
+  "Eddy",
+  "Anais",
+  "Jailyn",
+  "Javon",
 ];
+const generateEmail = () => {
+  return `${names[Math.floor(Math.random() * names.length)]}@hotel.com`;
+};
 
-const dummyHotels = [
-  {
-    hotel_name: "Hilton Hotel 1",
-    phone_numbers: ["1111111111", "2222222222"],
-    email_addresses: ["hilton1@email.com", "email@hilton1.com"],
-    address: "123 Hilton St",
-    rating: 4,
-    chain_name: "Hilton",
-  },
-  {
-    hotel_name: "Hilton Hotel 2",
-    phone_numbers: ["3333333333", "4444444444"],
-    email_addresses: ["hilton2@email.com", "email@hilton2.com"],
-    address: "456 Hilton St",
-    rating: 3,
-    chain_name: "Hilton",
-  },
-  {
-    hotel_name: "Hilton Hotel 3",
-    phone_numbers: ["5555555555", "6666666666"],
-    email_addresses: ["hilton3@email.com", "email@hilton3.com"],
-    address: "789 Hilton St",
-    rating: 5,
-    chain_name: "Hilton",
-  },
-  {
-    hotel_name: "Marriott Hotel 1",
-    phone_numbers: ["7777777777", "8888888888"],
-    email_addresses: ["marriott1@email.com", "email@marriott1.com"],
-    address: "123 Marriott St",
-    rating: 4,
-    chain_name: "Marriott",
-  },
-  {
-    hotel_name: "Marriott Hotel 2",
-    phone_numbers: ["9999999999", "0000000000"],
-    email_addresses: ["marriott2@email.com", "email@marriott2.com"],
-    address: "456 Marriott St",
-    rating: 3,
-    chain_name: "Marriott",
-  },
-  {
-    hotel_name: "Marriott Hotel 3",
-    phone_numbers: ["1111111111", "2222222222"],
-    email_addresses: ["marriott3@email.com", "email@marriott3.com"],
-    address: "789 Marriott St",
-    rating: 5,
-    chain_name: "Marriott",
-  },
-  {
-    hotel_name: "Accor Hotel 1",
-    phone_numbers: ["3333333333", "4444444444"],
-    email_addresses: ["accor1@email.com", "email@accor1.com"],
-    address: "123 Accor St",
-    rating: 4,
-    chain_name: "Accor",
-  },
-  {
-    hotel_name: "Accor Hotel 2",
-    phone_numbers: ["5555555555", "6666666666"],
-    email_addresses: ["accor2@email.com", "email@accor2.com"],
-    address: "456 Accor St",
-    rating: 3,
-    chain_name: "Accor",
-  },
-  {
-    hotel_name: "Accor Hotel 3",
-    phone_numbers: ["7777777777", "8888888888"],
-    email_addresses: ["accor3@email.com", "email@accor3.com"],
-    address: "789 Accor St",
-    rating: 5,
-    chain_name: "Accor",
-  },
-  {
-    hotel_name: "InterContinental Hotel 1",
-    phone_numbers: ["9999999999", "0000000000"],
-    email_addresses: [
-      "intercontinental1@email.com",
-      "email@intercontinental1.com",
-    ],
-    address: "123 InterContinental St",
-    rating: 4,
-    chain_name: "InterContinental",
-  },
-  {
-    hotel_name: "InterContinental Hotel 2",
-    phone_numbers: ["1111111111", "2222222222"],
-    email_addresses: [
-      "intercontinental2@email.com",
-      "email@intercontinental2.com",
-    ],
-    address: "456 InterContinental St",
-    rating: 3,
-    chain_name: "InterContinental",
-  },
-  {
-    hotel_name: "InterContinental Hotel 3",
-    phone_numbers: ["3333333333", "4444444444"],
-    email_addresses: [
-      "intercontinental3@email.com",
-      "email@intercontinental3.com",
-    ],
-    address: "789 InterContinental St",
-    rating: 5,
-    chain_name: "InterContinental",
-  },
-  {
-    hotel_name: "Hyatt Hotel 1",
-    phone_numbers: ["5555555555", "6666666666"],
-    email_addresses: ["hyatt1@email.com", "email@hyatt1.com"],
-    address: "123 Hyatt St",
-    rating: 4,
-    chain_name: "Hyatt",
-  },
-  {
-    hotel_name: "Hyatt Hotel 2",
-    phone_numbers: ["7777777777", "8888888888"],
-    email_addresses: ["hyatt2@email.com", "email@hyatt2.com"],
-    address: "456 Hyatt St",
-    rating: 3,
-    chain_name: "Hyatt",
-  },
-  {
-    hotel_name: "Hyatt Hotel 3",
-    phone_numbers: ["9999999999", "0000000000"],
-    email_addresses: ["hyatt3@email.com", "email@hyatt3.com"],
-    address: "789 Hyatt St",
-    rating: 5,
-    chain_name: "Hyatt",
-  },
-];
+const generatePhoneNumber = () => {
+  return Math.floor(Math.random() * 10000000000).toString();
+};
 
-const dummyHotelRooms = [
-  {
-    room_number: 101,
-    hotel_name: "Hilton Hotel 1",
-    price: 100,
-    damages: ["Broken lamp", "Stained carpet"],
-    amenities: ["TV", "Wi-Fi"],
-    occupied: false,
-    extended: false,
-    capacity: "single",
-    view: "ocean",
-  },
-  {
-    room_number: 102,
-    hotel_name: "Hilton Hotel 1",
-    price: 120,
-    damages: ["Cracked mirror", "Leaky faucet"],
-    amenities: ["Air conditioning", "Mini fridge"],
-    occupied: false,
-    extended: false,
-    capacity: "double",
-    view: "city",
-  },
-  {
-    room_number: 103,
-    hotel_name: "Hilton Hotel 1",
-    price: 150,
-    damages: ["Torn curtains", "Scratched furniture"],
-    amenities: ["Room service", "Safe"],
-    occupied: false,
-    extended: false,
-    capacity: "suite",
-    view: "garden",
-  },
-  {
-    room_number: 201,
-    hotel_name: "Hilton Hotel 2",
-    price: 90,
-    damages: ["Broken chair", "Clogged sink"],
-    amenities: ["Gym access", "Laundry service"],
-    occupied: false,
-    extended: false,
-    capacity: "single",
-    view: "city",
-  },
-  {
-    room_number: 202,
-    hotel_name: "Hilton Hotel 2",
-    price: 110,
-    damages: ["Stained sheets", "Faulty TV"],
-    amenities: ["Swimming pool", "Restaurant"],
-    occupied: false,
-    extended: false,
-    capacity: "double",
-    view: "ocean",
-  },
-  {
-    room_number: 203,
-    hotel_name: "Hilton Hotel 2",
-    price: 130,
-    damages: ["Cracked window", "Noisy air conditioning"],
-    amenities: ["Business center", "Concierge"],
-    occupied: false,
-    extended: false,
-    capacity: "suite",
-    view: "garden",
-  },
-  {
-    room_number: 301,
-    hotel_name: "Hilton Hotel 3",
-    price: 80,
-    damages: ["Worn-out carpet", "Flickering lights"],
-    amenities: ["Free breakfast", "Shuttle service"],
-    occupied: false,
-    extended: false,
-    capacity: "single",
-    view: "garden",
-  },
-  {
-    room_number: 302,
-    hotel_name: "Hilton Hotel 3",
-    price: 100,
-    damages: ["Leaky shower", "No hot water"],
-    amenities: ["Spa", "Bar"],
-    occupied: false,
-    extended: false,
-    capacity: "double",
-    view: "city",
-  },
-  {
-    room_number: 303,
-    hotel_name: "Hilton Hotel 3",
-    price: 120,
-    damages: ["Damaged door lock", "Faulty safe"],
-    amenities: ["Conference room", "Gift shop"],
-    occupied: false,
-    extended: false,
-    capacity: "suite",
-    view: "ocean",
-  },
-];
+const generateAddress = () => {
+  return `${Math.floor(Math.random() * 999)} ${
+    names[Math.floor(Math.random() * names.length)]
+  } St`;
+};
 
-const initHotelChains = async () => {
-  const db = await createDatabaseClient();
-  db.connect();
-  try {
-    for (const chain of dummyHotelChains) {
-      const query = "INSERT INTO hotel_chain VALUES ($1, $2, $3, $4, $5)";
-      const values = [
-        slugify(chain.chain_name, { lower: true }),
-        chain.chain_name,
-        chain.phone_numbers,
-        chain.email_addresses,
-        chain.central_address,
-      ];
-      const result = await db.query(query, values);
-      console.log(`Inserted ${result.rowCount} row(s) into hotel_chain table.`);
+const generateNumRandomHotelChains = (num: number): HotelChain[] => {
+  const result: HotelChain[] = [];
+  for (let i = 0; i < num; i++) {
+    const chain_name = `${
+      names[Math.floor(Math.random() * names.length)]
+    }'s Hotels`;
+    const phoneNumbersLength = Math.floor(Math.random() * 3) + 1;
+    const emailAddressesLength = Math.floor(Math.random() * 3) + 1;
+    const chain_slug = slugify(chain_name, { lower: true });
+    const randomChain = {
+      chain_name,
+      chain_slug,
+      phone_numbers: Array.from({ length: phoneNumbersLength }, () =>
+        generatePhoneNumber()
+      ),
+      email_addresses: Array.from({ length: emailAddressesLength }, () =>
+        generateEmail()
+      ),
+      central_address: generateAddress(),
+    };
+    result.push(randomChain);
+  }
+  return result;
+};
+
+const generateNumRandomHotelsPerChain = (
+  num: number,
+  hotelChains: HotelChain[]
+): Hotel[] => {
+  const result: Hotel[] = [];
+  for (const chain of hotelChains) {
+    for (let i = 0; i < num; i++) {
+      const phoneNumbersLength = Math.floor(Math.random() * 3) + 1;
+      const emailAddressesLength = Math.floor(Math.random() * 3) + 1;
+      const hotel_name = `${
+        names[Math.floor(Math.random() * names.length)]
+      }'s Hotel`;
+      const hotel_slug = slugify(hotel_name, { lower: true });
+      const randomHotel = {
+        hotel_name,
+        hotel_slug,
+        phone_numbers: Array.from({ length: phoneNumbersLength }, () =>
+          generatePhoneNumber()
+        ),
+        email_addresses: Array.from({ length: emailAddressesLength }, () =>
+          generateEmail()
+        ),
+        address: generateAddress(),
+        rating: Math.floor(Math.random() * 5) + 1,
+        chain_slug: chain.chain_slug as string,
+      };
+      result.push(randomHotel);
     }
-  } catch (error) {
-    console.error("Error inserting hotel chains:", error);
-  } finally {
-    await db.end();
+  }
+  return result;
+};
+
+const generateNumRandomHotelRoomsPerHotel = (
+  num: number,
+  hotels: Hotel[]
+): HotelRoom[] => {
+  const result: HotelRoom[] = [];
+  for (const hotel of hotels) {
+    for (let i = 0; i < num; i++) {
+      const room_number = Math.floor(Math.random() * 900) + 100;
+      const price = Math.floor(Math.random() * 300) + 50;
+      const damages = Array.from(
+        { length: Math.floor(Math.random() * 3) },
+        () =>
+          HOTEL_ROOM_DAMAGE_OPTIONS[
+            Math.floor(Math.random() * HOTEL_ROOM_DAMAGE_OPTIONS.length)
+          ]
+      ).filter((value, index, self) => self.indexOf(value) === index);
+      const amenities = Array.from(
+        { length: Math.floor(Math.random() * 3) },
+        () =>
+          HOTEL_ROOM_AMENITY_OPTIONS[
+            Math.floor(Math.random() * HOTEL_ROOM_AMENITY_OPTIONS.length)
+          ]
+      ).filter((value, index, self) => self.indexOf(value) === index);
+
+      const extended = Math.random() * 2 > 1;
+      const capacity = ["single", "double", "suite"][
+        Math.floor(Math.random() * 3)
+      ];
+      const view = ["ocean", "city", "garden", "pool", "mountain"][
+        Math.floor(Math.random() * 5)
+      ];
+      const randomRoom = {
+        room_number,
+        hotel_slug: hotel.hotel_slug as string,
+        price,
+        damages,
+        amenities,
+        extended,
+        capacity,
+        view,
+      };
+      //@ts-expect-error - ignore
+      result.push(randomRoom);
+    }
+  }
+  return result;
+};
+
+const generateNumRandomEmployeesPerHotel = (
+  num: number,
+  hotels: Hotel[]
+): Employee[] => {
+  const result: Employee[] = [];
+  for (const hotel of hotels) {
+    for (let i = 0; i < num; i++) {
+      const role =
+        i === 0 ? "manager" : Math.random() * 2 > 1.5 ? "manager" : "regular";
+      const full_name = `${names[Math.floor(Math.random() * names.length)]} ${
+        names[Math.floor(Math.random() * names.length)]
+      }`;
+      const address = generateAddress();
+      const sin = generateID();
+      const randomEmployee: Employee = {
+        full_name,
+        address,
+        role,
+        hotel_slug: hotel.hotel_slug as string,
+        sin,
+      };
+      result.push(randomEmployee);
+    }
+  }
+  return result;
+};
+
+const generateNumRandomCustomers = (num: number): Customer[] => {
+  const result: Customer[] = [];
+  for (let i = 0; i < num; i++) {
+    const full_name = `${names[Math.floor(Math.random() * names.length)]} ${
+      names[Math.floor(Math.random() * names.length)]
+    }`;
+    const address = generateAddress();
+    const randomCustomer: Customer = {
+      full_name,
+      address,
+      sin: generateID(),
+    };
+    result.push(randomCustomer);
+  }
+  return result;
+};
+
+const generateNumRandomBookingsPerCustomer = (
+  num: number,
+  customers: Customer[],
+  rooms: HotelRoom[]
+): Booking[] => {
+  const result: Booking[] = [];
+  for (const customer of customers) {
+    for (let i = 0; i < num; i++) {
+      const room = rooms[Math.floor(Math.random() * rooms.length)];
+      const currentDate = new Date();
+      const maxDate = new Date("2026-01-01");
+      const check_in = new Date(
+        currentDate.getTime() +
+          Math.random() * (maxDate.getTime() - currentDate.getTime())
+      );
+      const check_out = new Date(
+        check_in.getTime() +
+          Math.floor(Math.random() * 7 + 1) * 24 * 60 * 60 * 1000
+      );
+
+      const booking_id = generateID();
+
+      const days = Math.round(
+        (check_out.getTime() - check_in.getTime()) / (24 * 60 * 60 * 1000)
+      );
+      const total_cost = days * room.price;
+      const randomBooking: Booking = {
+        booking_id,
+        customer_sin: customer.sin,
+        hotel_slug: room.hotel_slug,
+        room_number: room.room_number,
+        check_in: check_in,
+        check_out: check_out,
+        total_cost,
+      };
+      result.push(randomBooking);
+    }
+  }
+  return result;
+};
+
+const initHotelChains = async (hotelChains: HotelChain[]) => {
+  for (const chain of hotelChains) {
+    const result = await createHotelChain(chain);
+    if (result) console.log(result);
   }
 };
 
-const initHotels = async () => {
-  const db = await createDatabaseClient();
-  db.connect();
-  try {
-    for (const hotel of dummyHotels) {
-      const query = "INSERT INTO hotel VALUES ($1, $2, $3, $4, $5, $6, $7)";
-      const values = [
-        slugify(hotel.hotel_name, { lower: true }),
-        hotel.hotel_name,
-        slugify(hotel.chain_name, { lower: true }),
-        hotel.phone_numbers,
-        hotel.email_addresses,
-        hotel.address,
-        hotel.rating,
-      ];
-      const result = await db.query(query, values);
-      console.log(`Inserted ${result.rowCount} row(s) into hotel table.`);
-    }
-  } catch (error) {
-    console.error("Error inserting hotels:", error);
-  } finally {
-    await db.end();
+const initHotels = async (hotels: Hotel[]) => {
+  for (const hotel of hotels) {
+    const result = await createHotel(hotel);
+    if (result) console.log(result);
   }
 };
 
-const initHotelRooms = async () => {
-  const db = await createDatabaseClient();
-  db.connect();
-  try {
-    for (const room of dummyHotelRooms) {
-      const query =
-        "INSERT INTO hotel_room VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
-      const values = [
-        room.room_number,
-        slugify(room.hotel_name, { lower: true }),
-        room.price,
-        room.damages,
-        room.amenities,
-        room.occupied,
-        room.extended,
-        room.capacity,
-        room.view,
-      ];
-      const result = await db.query(query, values);
-      console.log(`Inserted ${result.rowCount} row(s) into hotel_room table.`);
-    }
-  } catch (error) {
-    console.error("Error inserting hotel rooms:", error);
-  } finally {
-    await db.end();
+const initHotelRooms = async (hotelRooms: HotelRoom[]) => {
+  for (const room of hotelRooms) {
+    const result = await createHotelRoom(room);
+    if (result) console.log(result);
   }
 };
-console.log("Initializing database...");
 
-initHotelChains().then(() => {
-  console.log("Hotel chains initialized.");
-  initHotels()
-    .then(() => {
-      console.log("Hotels initialized.");
-    })
-    .then(() => {
-      initHotelRooms().then(() => {
-        console.log("Hotel rooms initialized.");
-        console.log("Database initialized.");
-      });
-    });
-});
+const initEmployees = async (employees: Employee[]) => {
+  for (const employee of employees) {
+    const result = await createEmployee(employee);
+    if (result) console.log(result);
+  }
+};
+
+const initCustomers = async (customers: Customer[]) => {
+  for (const customer of customers) {
+    const result = await createCustomer(customer);
+    if (result) console.log(result);
+  }
+};
+
+const initBookings = async (bookings: Booking[]) => {
+  for (const booking of bookings) {
+    const result = await createBooking(booking);
+    if (result) console.log(result);
+  }
+};
+
+const main = async () => {
+  console.log("Initializing database...");
+  const FiveRandomHotelChains = generateNumRandomHotelChains(5);
+  await initHotelChains(FiveRandomHotelChains);
+  console.log("Hotel chains initialized!");
+  const TenRandomHotelsPerChain = generateNumRandomHotelsPerChain(
+    10,
+    FiveRandomHotelChains
+  );
+  await initHotels(TenRandomHotelsPerChain);
+  console.log("Hotels initialized!");
+
+  const TwentyRandomRoomsPerHotel = generateNumRandomHotelRoomsPerHotel(
+    20,
+    TenRandomHotelsPerChain
+  );
+  await initHotelRooms(TwentyRandomRoomsPerHotel);
+  console.log("Hotel rooms initialized!");
+
+  const TenRandomEmployeesPerHotel = generateNumRandomEmployeesPerHotel(
+    10,
+    TenRandomHotelsPerChain
+  );
+  await initEmployees(TenRandomEmployeesPerHotel);
+  console.log("Employees initialized!");
+  const TwoHundredRandomCustomers = generateNumRandomCustomers(200);
+  await initCustomers(TwoHundredRandomCustomers);
+  console.log("Customers initialized!");
+  const OneRandomBookingsPerCustomer = generateNumRandomBookingsPerCustomer(
+    1,
+    TwoHundredRandomCustomers,
+    TwentyRandomRoomsPerHotel
+  );
+  await initBookings(OneRandomBookingsPerCustomer);
+  console.log("Bookings initialized!");
+  console.log("Database initialized!");
+};
+
+main();
