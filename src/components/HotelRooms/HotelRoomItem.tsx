@@ -18,10 +18,11 @@ import { HotelRoom } from "@/lib/hotelRoom";
 interface HotelRoomItemProps {
   hotelRoom: HotelRoom;
   index: number;
+  occupied: boolean;
 }
 
 const HotelRoomItem = (props: HotelRoomItemProps) => {
-  const { hotelRoom, index } = props;
+  const { hotelRoom, index, occupied } = props;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -32,20 +33,13 @@ const HotelRoomItem = (props: HotelRoomItemProps) => {
     return () => clearTimeout(timer);
   }, [index]);
 
-  const {
-    room_number,
-    hotel_slug,
-    price,
-    occupied,
-    amenities,
-    damages,
-    capacity,
-  } = hotelRoom;
+  const { room_number, hotel_slug, price, amenities, damages, capacity } =
+    hotelRoom;
   const viewRoomLink = `/${hotel_slug}/${room_number.toString()}`;
 
   if (isVisible && hotelRoom) {
     return (
-      <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[375px] max-w-[450px]">
+      <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[325px] max-w-[450px]">
         <>
           <CardHeader>
             <div className="flex justify-between items-center">
@@ -104,7 +98,7 @@ export default HotelRoomItem;
 
 const HotelChainPlaceholder = () => {
   return (
-    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[375px] max-w-[450px] h-[226px]">
+    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[325] max-w-[450px] h-[226px]">
       <div className=" flex flex-col gap-1 p-5">
         <div className="flex justify-between pt-1">
           <Skeleton className="h-8 w-1/2" />
