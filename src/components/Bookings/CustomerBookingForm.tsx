@@ -30,13 +30,12 @@ import { format } from "date-fns";
 import { HotelRoom } from "@/lib/hotelRoom";
 
 interface CustomerBookingFormProps {
-  chainSlug: string;
   hotelRoom: HotelRoom;
   user: User;
   bookingDates: BookedDates[];
 }
 const CustomerBookingForm = (props: CustomerBookingFormProps) => {
-  const { hotelRoom, user, chainSlug, bookingDates } = props;
+  const { hotelRoom, user, bookingDates } = props;
   const { hotel_slug, room_number, price } = hotelRoom;
   const [totalCost, setTotalCost] = useState(0);
 
@@ -88,9 +87,7 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
   const onSubmit = async (data: TCustomerBookingValidator) => {
     setIsLoading(true);
     if (!user) {
-      router.push(
-        `/customers?origin=${chainSlug}/${hotel_slug}/${room_number}`
-      );
+      router.push(`/customers?origin=$/${hotel_slug}/${room_number}`);
       toast.error("You must be logged in to book a room!");
       setIsLoading(false);
       return;
