@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -27,12 +27,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import slugify from "slugify";
 import { createEmployee, deleteEmployee, updateEmployee } from "@/lib/employee";
 import { toast } from "sonner";
 import FormWrapper from "../FormWrapper";
-import { formatSIN } from "@/lib/utils";
+import { cn, formatSIN } from "@/lib/utils";
 import { isManagerAtHotel, isSelf, setUser } from "@/lib/user";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
 
 interface EmployeeFormProps {
   hotels: Hotel[];
@@ -198,28 +206,60 @@ const EmployeeForm = (props: EmployeeFormProps) => {
                 control={form.control}
                 name="hotel_slug"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Hotel</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={hotel_slug}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a hotel" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {hotels.map((hotel) => (
-                          <SelectItem
-                            key={slugify(hotel.hotel_name, { lower: true })}
-                            value={slugify(hotel.hotel_name, { lower: true })}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="justify-between font-normal"
                           >
-                            {hotel.hotel_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                            {field.value
+                              ? `${
+                                  hotels.find(
+                                    (hotel) => hotel.hotel_slug === field.value
+                                  )?.hotel_name
+                                }`
+                              : "Select hotel"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 w-[375px]">
+                        <Command>
+                          <CommandInput placeholder="Search customers..." />
+                          <CommandEmpty>No customers found.</CommandEmpty>
+                          <CommandGroup>
+                            <CommandList>
+                              {hotels.map((hotel) => (
+                                <CommandItem
+                                  value={hotel.hotel_slug}
+                                  key={hotel.hotel_slug}
+                                  onSelect={() => {
+                                    form.setValue(
+                                      "hotel_slug",
+                                      hotel.hotel_slug
+                                    );
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      hotel.hotel_slug === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {hotel.hotel_name}
+                                </CommandItem>
+                              ))}
+                            </CommandList>
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
