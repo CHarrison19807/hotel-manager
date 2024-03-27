@@ -145,14 +145,14 @@ export const generateID = (): string => {
 /**
  *
  * @param initial The initial price of the hotel room.
- * @param amenities The amenities of the hotel room.
- * @param damages The damages of the hotel room.
+ * @param amenities Each index of the array represents an amenity.
+ * @param damages Each index of the array represents a damage.
  * @returns The final price after applying multipliers based on the number of amenities and damages.
  */
 export const calculateFinalPrice = (
   initial: number,
-  amenities: number[],
-  damages: number[]
+  amenities: string[] | number[],
+  damages: string[] | number[]
 ): number => {
   let multiplier = 1.0;
 
