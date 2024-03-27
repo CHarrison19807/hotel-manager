@@ -168,3 +168,20 @@ export const calculateFinalPrice = (
 
   return initial * multiplier;
 };
+/**
+ *
+ * @param startDate First date
+ * @param endDate Last date
+ * @returns An array of dates between the start and end dates
+ */
+
+export const getDatesBetween = (startDate: Date, endDate: Date) => {
+  const dates = [];
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate).toLocaleDateString());
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return dates;
+};
