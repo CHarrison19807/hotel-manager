@@ -141,3 +141,30 @@ export const generateID = (): string => {
   const id = (Math.floor(Math.random() * 900000000) + 100000000).toString();
   return id;
 };
+
+/**
+ *
+ * @param initial The initial price of the hotel room.
+ * @param amenities The amenities of the hotel room.
+ * @param damages The damages of the hotel room.
+ * @returns The final price after applying multipliers based on the number of amenities and damages.
+ */
+export const calculateFinalPrice = (
+  initial: number,
+  amenities: number[],
+  damages: number[]
+): number => {
+  let multiplier = 1.0;
+
+  amenities.forEach((amenity, index) => {
+    if (index > 1) {
+      multiplier += 0.05;
+    }
+  });
+
+  if (damages.length > 0) {
+    multiplier -= 0.1;
+  }
+
+  return initial * multiplier;
+};

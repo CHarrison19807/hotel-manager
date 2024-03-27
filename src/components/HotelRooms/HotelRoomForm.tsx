@@ -37,7 +37,9 @@ import { Switch } from "../ui/switch";
 import {
   HOTEL_ROOM_AMENITY_OPTIONS,
   HOTEL_ROOM_DAMAGE_OPTIONS,
+  calculateFinalPrice,
   cn,
+  formatPrice,
   generateID,
 } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -53,6 +55,7 @@ import {
 } from "../ui/command";
 import { isManagerAtHotel } from "@/lib/user";
 import { toast } from "sonner";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 interface HotelRoomFormProps {
   hotels: Hotel[];
@@ -165,6 +168,12 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
           router.refresh();
         }
       } else {
+        const finalPrice = calculateFinalPrice(
+          data.price,
+          amenitiesCount,
+          damagesCount
+        );
+        data = { ...data, price: finalPrice };
         const result = await createHotelRoom(data);
         if (result) {
           toast.error(result);
@@ -343,7 +352,7 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
 
               <FormField
                 control={form.control}
-                name="capacity"
+                name="view"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>View</FormLabel>
@@ -525,10 +534,28 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel>Base Price</FormLabel>
                     <FormControl>
                       <Input placeholder="100.00" {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Price increases by 5% per amenity beyond 2.
+                      <br />
+                      Price decreases by 10% if the room has damage(s).
+                      <br />
+                      {field.value === 0 ||
+                      // @ts-expect-error
+                      field.value === "" ||
+                      formatPrice(field.value) === "$NaN"
+                        ? "Enter a price to calculate final price"
+                        : `Final price: ${formatPrice(
+                            calculateFinalPrice(
+                              field.value,
+                              amenitiesCount,
+                              damagesCount
+                            )
+                          )}`}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
