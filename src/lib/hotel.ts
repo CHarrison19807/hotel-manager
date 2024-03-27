@@ -2,6 +2,8 @@
 
 import slugify from "slugify";
 import { createDatabaseClient } from "./database";
+import { createEmployee } from "./employee";
+import { generateID } from "./utils";
 
 /**
  * Represents a hotel.
@@ -61,6 +63,16 @@ const createHotel = async (hotel: Hotel): Promise<string> => {
       rating,
     ];
     await db.query(query, values);
+
+    for (let i = 0; i < 2; i++) {
+      await createEmployee({
+        full_name: `Hotel ${i === 0 ? "Manager" : "Employee"} Placeholder`,
+        address: `123 ${i === 0 ? hotel_name + " M" : hotel_name + " E"} St.`,
+        hotel_slug: hotelSlug,
+        role: i === 0 ? "manager" : "regular",
+        sin: generateID(),
+      });
+    }
     return "";
   } catch (error) {
     return "Unexpected error occurred while creating hotel! Please try again.";
