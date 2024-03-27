@@ -4,9 +4,10 @@ import { getSingleHotel } from "@/lib/hotel";
 import { getHotelRooms } from "@/lib/hotelRoom";
 import { notFound } from "next/navigation";
 import CustomerBookingForm from "@/components/Bookings/CustomerBookingForm";
-import { getBookedDates } from "@/lib/booking";
+import { getAllBookings, getBookedDates } from "@/lib/booking";
 import { getSingleHotelRoom } from "@/lib/hotelRoom";
 import { getServerSideUser } from "@/lib/user";
+import { getAllHotelChains } from "@/lib/hotelChain";
 
 interface HotelProps {
   params: {
@@ -67,8 +68,9 @@ const CustomerSecondSlugPage = async ({ params }: HotelProps) => {
     );
   } else {
     const hotelSlug = secondSlug;
-
+    const bookings = await getAllBookings();
     const rooms = await getHotelRooms(hotelSlug);
+    const hotelChains = await getAllHotelChains();
     const hotel = await getSingleHotel(hotelSlug);
     if (!rooms || !hotel) {
       notFound();
@@ -79,7 +81,7 @@ const CustomerSecondSlugPage = async ({ params }: HotelProps) => {
           <h1 className="text-4xl font-bold my-10 text-center">
             All Hotel Rooms in {hotel.hotel_name}
           </h1>
-          <HotelRoomGrid hotelRooms={rooms} />
+          <HotelRoomGrid hotelRooms={rooms} bookings={bookings} />
         </div>
       </MaxWidthWrapper>
     );
