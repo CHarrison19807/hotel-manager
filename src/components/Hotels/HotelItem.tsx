@@ -16,7 +16,13 @@ import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import Rating from "@mui/material/Rating";
 
-const HotelItem = ({ hotel }: { hotel: Hotel }) => {
+interface HotelItemProps {
+  hotel: Hotel;
+  index: number;
+}
+
+const HotelItem = (props: HotelItemProps) => {
+  const { hotel, index } = props;
   const {
     hotel_name,
     hotel_slug: hotelSlug,
@@ -31,8 +37,12 @@ const HotelItem = ({ hotel }: { hotel: Hotel }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, index * 75);
+
+    return () => clearTimeout(timer);
+  }, [index]);
 
   if (isVisible && hotel) {
     return (

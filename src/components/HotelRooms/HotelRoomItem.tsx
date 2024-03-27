@@ -16,14 +16,14 @@ import Status from "../Status";
 import { HotelRoom } from "@/lib/hotelRoom";
 
 interface HotelRoomItemProps {
-  room: HotelRoom;
-  chainSlug: string;
+  hotelRoom: HotelRoom;
   index: number;
 }
 
 const HotelRoomItem = (props: HotelRoomItemProps) => {
-  const { room, chainSlug, index } = props;
+  const { hotelRoom, index } = props;
   const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -40,10 +40,10 @@ const HotelRoomItem = (props: HotelRoomItemProps) => {
     amenities,
     damages,
     capacity,
-  } = room;
-  const viewRoomLink = `/${chainSlug}/${hotel_slug}/${room_number.toString()}`;
+  } = hotelRoom;
+  const viewRoomLink = `/${hotel_slug}/${room_number.toString()}`;
 
-  if (isVisible && room) {
+  if (isVisible && hotelRoom) {
     return (
       <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[375px] max-w-[450px]">
         <>
@@ -104,7 +104,7 @@ export default HotelRoomItem;
 
 const HotelChainPlaceholder = () => {
   return (
-    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[375px] max-w-[450px]">
+    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[375px] max-w-[450px] h-[226px]">
       <div className=" flex flex-col gap-1 p-5">
         <div className="flex justify-between pt-1">
           <Skeleton className="h-8 w-1/2" />

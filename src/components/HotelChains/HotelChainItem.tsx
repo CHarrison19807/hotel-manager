@@ -15,12 +15,23 @@ import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import slugify from "slugify";
 
-const HotelChainItem = ({ hotelChain }: { hotelChain: HotelChain }) => {
+interface HotelChainItemProps {
+  hotelChain: HotelChain;
+  index: number;
+}
+
+const HotelChainItem = (props: HotelChainItemProps) => {
+  const { index, hotelChain } = props;
+
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, index * 75);
+
+    return () => clearTimeout(timer);
+  }, [index]);
 
   const {
     chain_name,
