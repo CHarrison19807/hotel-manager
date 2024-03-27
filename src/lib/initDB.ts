@@ -1094,7 +1094,7 @@ const generateNumRandomHotelRoomsPerHotel = (
   const result: HotelRoom[] = [];
   for (const hotel of hotels) {
     for (let i = 0; i < num; i++) {
-      const room_number = Math.floor(Math.random() * 900) + 100;
+      const room_number = Math.floor(Math.random() * 9899) + 100;
       const initialPrice = Math.floor(Math.random() * 200 * hotel.rating) + 75;
       const damages = Array.from(
         { length: Math.floor(Math.random() * 3) },
@@ -1110,7 +1110,12 @@ const generateNumRandomHotelRoomsPerHotel = (
             Math.floor(Math.random() * HOTEL_ROOM_AMENITY_OPTIONS.length)
           ]
       ).filter((value, index, self) => self.indexOf(value) === index);
-      const finalPrice = calculateFinalPrice(initialPrice, damages, amenities);
+
+      const finalPrice = calculateFinalPrice(
+        initialPrice,
+        damages,
+        amenities
+      ).toFixed(2);
 
       const extended = Math.random() * 2 > 1;
       const capacity = ["single", "double", "suite"][
@@ -1122,7 +1127,7 @@ const generateNumRandomHotelRoomsPerHotel = (
       const randomRoom = {
         room_number,
         hotel_slug: hotel.hotel_slug as string,
-        finalPrice,
+        price: finalPrice,
         damages,
         amenities,
         extended,
