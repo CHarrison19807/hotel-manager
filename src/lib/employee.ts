@@ -37,7 +37,6 @@ const createEmployee = async (employee: Employee): Promise<string> => {
       "INSERT INTO employee (full_name, address, sin, role, hotel_slug) VALUES ($1, $2, $3, $4, $5)";
     const values = [full_name, address, sin, role, hotel_slug];
     await db.query(query, values);
-    await db.end();
   } catch (error) {
     return "Unexpected error occurred while creating employee! Please try again.";
   } finally {
@@ -118,7 +117,6 @@ const updateEmployee = async (employee: Employee): Promise<string> => {
       "UPDATE employee SET full_name = $1, address = $2, role = $3, hotel_slug = $4 WHERE sin = $5";
     const values = [full_name, address, role, hotel_slug, sin];
     await db.query(query, values);
-    await db.end();
   } catch (error) {
     return "Unexpected error occurred while updating employee! Please try again.";
   } finally {
