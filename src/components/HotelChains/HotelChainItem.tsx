@@ -42,7 +42,7 @@ const HotelChainItem = (props: HotelChainItemProps) => {
   } = hotelChain;
   if (isVisible && hotelChain) {
     return (
-      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px] flex-col flex">
+      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[325px] flex-col flex">
         <CardHeader>
           <CardTitle>{chain_name}</CardTitle>
           <div className="flex justify-between text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export default HotelChainItem;
 
 const HotelChainPlaceholder = () => {
   return (
-    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
+    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[325px]">
       <div className=" flex flex-col gap-1 p-5">
         <Skeleton className="h-8 w-3/5" />
         <div className="flex justify-between pt-1">

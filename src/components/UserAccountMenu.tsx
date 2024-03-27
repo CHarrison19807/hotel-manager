@@ -27,7 +27,7 @@ const UserAccountMenu = (props: UserAccountMenuProps) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="overflow-visible">
         <Button variant="ghost" size="sm" className="relative">
-          My profile
+          User
         </Button>
       </DropdownMenuTrigger>
 

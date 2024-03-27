@@ -46,7 +46,7 @@ const HotelItem = (props: HotelItemProps) => {
 
   if (isVisible && hotel) {
     return (
-      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px] flex flex-col">
+      <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[325px] flex flex-col">
         <CardHeader>
           <div className="flex justify-between">
             <CardTitle>{hotel_name}</CardTitle>
@@ -102,7 +102,7 @@ const HotelItem = (props: HotelItemProps) => {
 
 const HotelPlaceholder = () => {
   return (
-    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[375px]">
+    <Card className="sm:w-full md:mx-0 mx-auto max-w-[450px] md:max-w-none w-[325px]">
       <div className=" flex flex-col gap-1 p-5">
         <div className="flex justify-between pt-1">
           <Skeleton className="h-8 w-1/2" />
