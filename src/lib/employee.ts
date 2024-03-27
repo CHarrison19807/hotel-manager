@@ -99,6 +99,20 @@ const updateEmployee = async (employee: Employee): Promise<string> => {
 
   try {
     await db.connect();
+    const previousHotelSlug = (await getEmployee(employee.sin)).hotel_slug;
+
+    for (let i = 0; i < 2; i++) {
+      const searchQuery =
+        "SELECT * FROM employee WHERE hotel_slug = $1 AND role = $2";
+      const searchValues = [previousHotelSlug, i === 0 ? "manager" : "regular"];
+      const { rows } = await db.query(searchQuery, searchValues);
+      if (rows.length === 1) {
+        return `Updating this employee would result in having zero ${
+          i === 0 ? "managers" : "regular employees"
+        } in the hotel!`;
+      }
+    }
+
     const { full_name, address, sin, role, hotel_slug } = employee;
     const query =
       "UPDATE employee SET full_name = $1, address = $2, role = $3, hotel_slug = $4 WHERE sin = $5";
@@ -123,6 +137,19 @@ const deleteEmployee = async (sin: string): Promise<string> => {
 
   try {
     await db.connect();
+    const hotel_slug = (await getEmployee(sin)).hotel_slug;
+    for (let i = 0; i < 2; i++) {
+      const searchQuery =
+        "SELECT * FROM employee WHERE hotel_slug = $1 AND role = $2";
+      const searchValues = [hotel_slug, i === 0 ? "manager" : "regular"];
+      const { rows } = await db.query(searchQuery, searchValues);
+      if (rows.length === 1) {
+        return `Deleting this employee would result in having zero ${
+          i === 0 ? "managers" : "regular employees"
+        } in the hotel!`;
+      }
+    }
+
     const query = "DELETE FROM employee WHERE sin = $1";
     const values = [sin];
     await db.query(query, values);
