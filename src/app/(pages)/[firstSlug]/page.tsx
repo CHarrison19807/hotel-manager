@@ -1,18 +1,18 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { getChainHotels } from "@/lib/hotel";
 import { getSingleHotelChain } from "@/lib/hotelChain";
-import { Hotel } from "@/lib/hotel";
 import { notFound } from "next/navigation";
-import HotelItem from "@/components/Hotels/HotelItem";
+import HotelGrid from "@/components/Hotels/HotelGrid";
 
 interface HotelChainProps {
   params: {
-    chainSlug: string;
+    firstSlug: string;
   };
 }
 
 const HotelChainPage = async ({ params }: HotelChainProps) => {
-  const { chainSlug } = params;
+  const { firstSlug } = params;
+  const chainSlug = firstSlug;
   const hotels = await getChainHotels(chainSlug);
   const hotelChain = await getSingleHotelChain(chainSlug);
 
@@ -28,11 +28,7 @@ const HotelChainPage = async ({ params }: HotelChainProps) => {
         <h1 className="text-4xl font-bold my-10">
           All Hotels Part of {hotelChainName}
         </h1>
-        <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6  ">
-          {hotels.map((hotel: Hotel) => (
-            <HotelItem key={hotel.hotel_name} hotel={hotel} />
-          ))}
-        </div>
+        <HotelGrid hotels={hotels} />
       </div>
     </MaxWidthWrapper>
   );

@@ -5,13 +5,13 @@ import { notFound } from "next/navigation";
 
 interface EditHotelChainProps {
   params: {
-    hotelChainSlug: string;
+    chainSlug: string;
   };
 }
 
 const EditHotelChainPage = async ({ params }: EditHotelChainProps) => {
-  const { hotelChainSlug } = params;
-  const hotelChain = await getSingleHotelChain(hotelChainSlug);
+  const { chainSlug } = params;
+  const hotelChain = await getSingleHotelChain(chainSlug);
 
   if (!hotelChain) {
     notFound();
@@ -19,12 +19,7 @@ const EditHotelChainPage = async ({ params }: EditHotelChainProps) => {
 
   return (
     <MaxWidthWrapper>
-      <HotelChainForm
-        headerText={`Edit ${hotelChain.chain_name}`}
-        submitText="Save Hotel Chain"
-        usage="edit"
-        hotelChain={hotelChain}
-      />
+      <HotelChainForm hotelChain={hotelChain} />
     </MaxWidthWrapper>
   );
 };
