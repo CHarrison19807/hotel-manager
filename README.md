@@ -57,4 +57,4 @@ Follow these steps to run this project:
    npm run dev
    ```
 
-   The application should be accessible at your local [port 3000](localhost:3000/).
+   The application should be accessible at your local [port 3000](http://localhost:3000/).
