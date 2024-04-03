@@ -53,15 +53,44 @@ const UserAccountMenu = (props: UserAccountMenuProps) => {
               </div>
             </div>
             <DropdownMenuSeparator />
+            <div className="flex items-center justify-start gap-2 p-2">
+              <div className="flex flex-col space-y-0.5 leading-none">
+                <p className="font-medium text-sm text-black">Employee pages</p>
+              </div>
+            </div>
             <DropdownMenuItem asChild>
-              <Link href="/admin">Employee dashboard</Link>
+              <Link href="/admin/bookings">Bookings</Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/hotels">Hotels</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/hotel-chains">Hotel Chains</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/hotel-rooms">Hotel Rooms</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/info">Admin Info</Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
           </>
         ) : (
           <DropdownMenuItem asChild>
             <Link href={`/user/${user.sin}/bookings`}>My bookings</Link>
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem asChild>
+          <Link href="/employees">
+            {role ? "Login as a different employee" : "Login as an employee"}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/customers">
+            {role ? "Login as a customer" : "Login as a different customer"}
+          </Link>
+        </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <Link
