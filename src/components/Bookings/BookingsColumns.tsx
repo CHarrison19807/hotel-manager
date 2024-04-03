@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Booking, deleteBooking } from "@/lib/booking";
+import { Booking } from "@/lib/booking";
 import { formatPrice, unslugify } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import Link from "next/link";
-import { toast } from "sonner";
+import SetIsRentingButton from "./SetIsRentingDropdownItem";
+import DeleteBookingDropdownItem from "./DeleteBookingDropdownItem";
 
 const BookingColumns: ColumnDef<Booking>[] = [
   {
@@ -107,11 +107,31 @@ const BookingColumns: ColumnDef<Booking>[] = [
     },
   },
   {
+    id: "is_renting",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Renting
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    accessorKey: "is_renting",
+    cell: ({ row }) => {
+      const original: boolean = row.getValue("is_renting");
+      const final: string = original ? "Yes" : "No";
+      return final;
+    },
+  },
+  {
     id: "actions",
     enableHiding: false,
-    cell: ({ table, row }) => {
+    cell: ({ row }) => {
       const booking: Booking = row.original;
-      const { booking_id, customer_sin } = booking;
+      const { booking_id } = booking;
 
       return (
         <DropdownMenu>
@@ -131,23 +151,8 @@ const BookingColumns: ColumnDef<Booking>[] = [
               Copy booking ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                onClick={async () => {
-                  const result = await deleteBooking(booking_id as string);
-                  if (result) {
-                    toast.error(
-                      "Unexpected error occurred while cancelling booking. Please try again."
-                    );
-                  } else {
-                    toast.success("Booking cancelled successfully!");
-                  }
-                }}
-                href={`/user/${customer_sin}/bookings/`}
-              >
-                Cancel booking
-              </Link>
-            </DropdownMenuItem>
+            <DeleteBookingDropdownItem booking={booking} />
+            <SetIsRentingButton booking={booking} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

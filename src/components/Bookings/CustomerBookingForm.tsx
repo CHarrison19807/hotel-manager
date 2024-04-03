@@ -87,7 +87,7 @@ const CustomerBookingForm = (props: CustomerBookingFormProps) => {
   const onSubmit = async (data: TCustomerBookingValidator) => {
     setIsLoading(true);
     if (!user) {
-      router.push(`/customers?origin=$/${hotel_slug}/${room_number}`);
+      router.push(`/customers?origin=/${hotel_slug}/${room_number}`);
       toast.error("You must be logged in to book a room!");
       setIsLoading(false);
       return;
