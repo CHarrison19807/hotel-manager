@@ -24,61 +24,72 @@ const HotelRoomGrid = (props: HotelRoomGridProps) => {
 
   return (
     <MaxWidthWrapper>
-      <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6">
-        {currentHotelRooms.map((hotelRoom: HotelRoom, index: number) => {
-          const bookingsForRoom = bookings.filter(
-            (booking) =>
-              booking.room_number === hotelRoom.room_number &&
-              booking.hotel_slug === hotelRoom.hotel_slug
-          );
-          const occupied = bookingsForRoom.some((booking) => {
-            const bookedDates = getDatesBetween(
-              booking.check_in,
-              booking.check_out
-            );
-            return bookedDates.includes(new Date().toLocaleDateString());
-          });
+      {currentHotelRooms.length > 0 && (
+        <>
+          <div className="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-y-6 lg:gap-6">
+            {currentHotelRooms.map((hotelRoom: HotelRoom, index: number) => {
+              const bookingsForRoom = bookings.filter(
+                (booking) =>
+                  booking.room_number === hotelRoom.room_number &&
+                  booking.hotel_slug === hotelRoom.hotel_slug
+              );
+              const occupied = bookingsForRoom.some((booking) => {
+                const bookedDates = getDatesBetween(
+                  booking.check_in,
+                  booking.check_out
+                );
+                return bookedDates.includes(new Date().toLocaleDateString());
+              });
 
-          return (
-            <HotelRoomItem
-              key={generateID()}
-              index={index}
-              hotelRoom={hotelRoom}
-              occupied={occupied}
-            />
-          );
-        })}
-      </div>
+              return (
+                <HotelRoomItem
+                  key={generateID()}
+                  index={index}
+                  hotelRoom={hotelRoom}
+                  occupied={occupied}
+                />
+              );
+            })}
+          </div>
 
-      <div className="sm:flex justify-between items-center grid grid-cols-1">
-        <div>
-          <p className="text-sm sm:py-2 text-center sm:text-left py-4">
-            Showing {currentHotelRooms.length} of {hotelRooms.length} results.
-          </p>
+          <div className="sm:flex justify-between items-center grid grid-cols-1">
+            <div>
+              <p className="text-sm sm:py-2 text-center sm:text-left py-4">
+                Showing {currentHotelRooms.length} of {hotelRooms.length}{" "}
+                results.
+              </p>
+            </div>
+            <div className="flex items-center sm:justify-end justify-center space-x-2 py-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCurrentPage((oldPage) => Math.max(oldPage - 1, 1))
+                }
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCurrentPage((oldPage) => Math.min(oldPage + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {currentHotelRooms.length === 0 && (
+        <div className="flex justify-center items-center h-96">
+          <p className="text-lg">No hotel rooms found.</p>
         </div>
-        <div className="flex items-center sm:justify-end justify-center space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage((oldPage) => Math.max(oldPage - 1, 1))
-            }
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage((oldPage) => Math.min(oldPage + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      )}
     </MaxWidthWrapper>
   );
 };

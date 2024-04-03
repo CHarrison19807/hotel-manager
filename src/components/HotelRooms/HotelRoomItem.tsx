@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, unslugify } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,16 +42,22 @@ const HotelRoomItem = (props: HotelRoomItemProps) => {
       <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[325px] max-w-[450px]">
         <>
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>
-                <p>Room {room_number}</p>
-              </CardTitle>
-              <Status
-                goodText="Vacant"
-                badText="Occupied"
-                status={occupied as boolean}
-                desired={false}
-              />
+            <div>
+              <div className="flex justify-between items-center">
+                <CardTitle>
+                  <p>Room {room_number}</p>
+                </CardTitle>
+
+                <Status
+                  goodText="Vacant"
+                  badText="Occupied"
+                  status={occupied as boolean}
+                  desired={false}
+                />
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {unslugify(hotelRoom.hotel_slug)}
+              </p>
             </div>
           </CardHeader>
           <CardContent>
@@ -98,12 +104,13 @@ export default HotelRoomItem;
 
 const HotelChainPlaceholder = () => {
   return (
-    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[325] max-w-[450px] h-[226px]">
+    <Card className="sm:w-full md:mx-0 mx-auto md:max-w-none min-w-[325] max-w-[450px] h-[246px]">
       <div className=" flex flex-col gap-1 p-5">
         <div className="flex justify-between pt-1">
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-8 w-1/4" />
         </div>
+        <Skeleton className="h-6 w-1/3" />
 
         <div className="flex justify-between gap-2 w-full py-6">
           <div className="flex flex-col gap-2 w-2/5">

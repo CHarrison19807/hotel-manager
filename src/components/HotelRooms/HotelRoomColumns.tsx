@@ -42,11 +42,6 @@ const HotelRoomColumns: ColumnDef<HotelRoom>[] = [
     accessorFn: (row) => row.amenities?.join(", ") || "None",
   },
   {
-    header: "Occupancy",
-    accessorKey: "occupancy",
-    accessorFn: (row) => (row.occupied ? "Occupied" : "Vacant"),
-  },
-  {
     header: "Extended",
     accessorKey: "extended",
     accessorFn: (row) => (row.extended ? "Yes" : "No"),
