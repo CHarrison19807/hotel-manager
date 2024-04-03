@@ -64,6 +64,27 @@ const HotelRoomFilterGridWrapper = ({
           return false;
         }
       }
+      if (checkIn && checkOut) {
+        const bookingsForRoom = bookings.filter(
+          (booking) =>
+            booking.room_number === room.room_number &&
+            booking.hotel_slug === room.hotel_slug
+        );
+        const occupied = bookingsForRoom.some((booking) => {
+          const bookedDates = getDatesBetween(
+            booking.check_in,
+            booking.check_out
+          );
+          const datesBetween = getDatesBetween(
+            checkIn as Date,
+            checkOut as Date
+          );
+          return datesBetween.some((date) => bookedDates.includes(date));
+        });
+        if (occupied) {
+          return false;
+        }
+      }
     }
     if (capacity && room.capacity !== capacity) {
       return false;
@@ -107,8 +128,8 @@ const HotelRoomFilterGridWrapper = ({
     }
 
     if (
-      room.price < (minPrice as number) ||
-      room.price > (maxPrice as number)
+      room.price <= (minPrice as number) ||
+      room.price >= (maxPrice as number)
     ) {
       return false;
     }

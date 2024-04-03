@@ -38,6 +38,7 @@ import {
   HOTEL_ROOM_AMENITY_OPTIONS,
   HOTEL_ROOM_DAMAGE_OPTIONS,
   calculateFinalPrice,
+  calculateInitialPrice,
   cn,
   formatPrice,
   generateID,
@@ -55,7 +56,6 @@ import {
 } from "../ui/command";
 import { isManagerAtHotel } from "@/lib/user";
 import { toast } from "sonner";
-import { init } from "next/dist/compiled/webpack/webpack";
 
 interface HotelRoomFormProps {
   hotels: Hotel[];
@@ -74,20 +74,15 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
     damages,
     view,
   } = hotelRoom ?? {};
-
   const form: UseFormReturn<THotelRoomValidator> = useForm<THotelRoomValidator>(
     {
       defaultValues: {
         capacity,
         extended: extended ?? false,
         hotel_slug,
-        // @ts-expect-error
-        price: price ?? "",
         view,
         // @ts-expect-error
         room_number: room_number ?? "",
-        amenities,
-        damages,
       },
       resolver: zodResolver(HotelRoomValidator),
     }
@@ -134,7 +129,7 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
     const index = damagesCount[damagesCount.length - 1];
     if (damagesCount.length > 1) {
       setDamagesCount(damagesCount.slice(0, -1));
-      form.setValue(`damages.${index}`, "");
+      form.resetField(`damages.${index}`);
     } else {
       setDamagesCount([]);
       form.setValue(`damages`, []);
@@ -145,7 +140,7 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
     const index = amenitiesCount[amenitiesCount.length - 1];
     if (amenitiesCount.length > 1) {
       setAmenitiesCount(amenitiesCount.slice(0, -1));
-      form.setValue(`amenities.${index}`, "");
+      form.resetField(`amenities.${index}`);
     } else {
       setAmenitiesCount([]);
       form.setValue(`amenities`, []);
@@ -158,6 +153,12 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
   const onSubmit = async (data: THotelRoomValidator) => {
     setIsLoading(true);
     if (await isManagerAtHotel(data.hotel_slug)) {
+      if (data.damages?.length === 1 && data.damages[0] === "") {
+        data.damages = [];
+      }
+      if (data.amenities?.length === 1 && data.amenities[0] === "") {
+        data.amenities = [];
+      }
       if (hotelRoom) {
         const result = await updateHotelRoom(data);
         if (result) {
@@ -168,12 +169,6 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
           router.refresh();
         }
       } else {
-        const finalPrice = calculateFinalPrice(
-          data.price,
-          amenitiesCount,
-          damagesCount
-        );
-        data = { ...data, price: finalPrice };
         const result = await createHotelRoom(data);
         if (result) {
           toast.error(result);
@@ -381,6 +376,13 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
                     key={generateID()}
                     control={form.control}
                     name={`damages.${index}`}
+                    defaultValue={
+                      damages
+                        ? damages[index] !== undefined
+                          ? damages[index]
+                          : ""
+                        : ""
+                    }
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Damage</FormLabel>
@@ -447,6 +449,13 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
                     key={generateID()}
                     control={form.control}
                     name={`amenities.${index}`}
+                    defaultValue={
+                      amenities
+                        ? amenities[index] !== undefined
+                          ? amenities[index]
+                          : ""
+                        : ""
+                    }
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Amenity</FormLabel>
@@ -532,6 +541,16 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
               <FormField
                 control={form.control}
                 name="price"
+                //@ts-expect-error
+                defaultValue={
+                  hotelRoom?.damages
+                    ? calculateInitialPrice(
+                        hotelRoom.price,
+                        amenitiesCount,
+                        hotelRoom.damages.length > 0
+                      )
+                    : ""
+                }
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Base Price</FormLabel>
@@ -552,7 +571,10 @@ const HotelRoomForm = (props: HotelRoomFormProps) => {
                             calculateFinalPrice(
                               field.value,
                               amenitiesCount,
-                              damagesCount
+                              damagesCount.length > 1
+                                ? true
+                                : form.getValues("damages.0") !== undefined &&
+                                    form.getValues("damages.0") !== ""
                             )
                           )}`}
                     </FormDescription>
