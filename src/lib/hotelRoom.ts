@@ -8,7 +8,6 @@ export type HotelRoom = {
   price: number;
   damages?: string[];
   amenities?: string[];
-  occupied?: boolean;
   extended: boolean;
   capacity: "single" | "double" | "suite";
   view: "pool" | "city" | "mountain" | "ocean" | "garden";
@@ -24,7 +23,6 @@ const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       price,
       damages,
       amenities,
-      occupied,
       extended,
       capacity,
       view,
@@ -40,14 +38,13 @@ const createHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
     }
 
     const query =
-      "INSERT INTO hotel_room (room_number, hotel_slug, price, damages, amenities, occupied, extended, capacity, view) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
+      "INSERT INTO hotel_room (room_number, hotel_slug, price, damages, amenities, extended, capacity, view) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
     const values = [
       room_number,
       hotel_slug,
       price,
       damages,
       amenities,
-      occupied ?? false,
       extended,
       capacity,
       view,
@@ -107,7 +104,6 @@ const updateHotelRoom = async (hotelRoom: HotelRoom): Promise<string> => {
       price,
       damages,
       amenities,
-      occupied,
       extended,
       capacity,
       view,

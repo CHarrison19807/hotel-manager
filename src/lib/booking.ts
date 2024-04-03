@@ -12,6 +12,7 @@ export type Booking = {
   check_in: Date;
   check_out: Date;
   total_cost: number;
+  is_renting?: boolean;
 };
 
 export type BookedDates = {
@@ -64,7 +65,7 @@ const createBooking = async (booking: Booking): Promise<string> => {
       }
     }
 
-    const query = `INSERT INTO booking (booking_id, customer_sin, hotel_slug, room_number, check_in, check_out, total_cost) VALUES ($1, $2, $3, $4, $5, $6, $7);`;
+    const query = `INSERT INTO booking (booking_id, customer_sin, hotel_slug, room_number, check_in, check_out, total_cost, is_renting) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
     const values = [
       booking_id ? booking_id : new_booking_id,
       customer_sin,
@@ -73,6 +74,7 @@ const createBooking = async (booking: Booking): Promise<string> => {
       check_in,
       check_out,
       total_cost,
+      check_in <= new Date(),
     ];
     await db.query(query, values);
   } catch (error) {
@@ -153,8 +155,9 @@ const updateBooking = async (booking: Booking): Promise<string> => {
       check_in,
       check_out,
       total_cost,
+      is_renting,
     } = booking;
-    const query = `UPDATE booking SET customer_sin = $1, hotel_slug = $2, room_number = $3, check_in = $4, check_out = $5, total_cost = $6 WHERE booking_id = $7;`;
+    const query = `UPDATE booking SET customer_sin = $1, hotel_slug = $2, room_number = $3, check_in = $4, check_out = $5, total_cost = $6, is_renting = $8 WHERE booking_id = $7;`;
     const values = [
       customer_sin,
       hotel_slug,
@@ -163,6 +166,7 @@ const updateBooking = async (booking: Booking): Promise<string> => {
       check_out,
       total_cost,
       booking_id,
+      is_renting,
     ];
     await db.query(query, values);
   } catch (error) {
