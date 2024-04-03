@@ -39,7 +39,7 @@ Follow these steps to run this project:
 
 5. **Configure your database connection**:
 
-   Configure your database connection details in initDB.ts.
+   Configure your database connection details in database.ts.
 
 6. **Initialize the database**:
 
