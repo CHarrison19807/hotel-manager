@@ -5,7 +5,7 @@ const createDatabaseClient = async () => {
     user: "postgres",
     host: "localhost",
     port: 5432,
-    database: "hotelhub",
+    database: "dream_stay",
     password: "postgres",
   });
 

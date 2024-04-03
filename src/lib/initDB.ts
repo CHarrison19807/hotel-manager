@@ -6,7 +6,6 @@ import { Booking, createBooking } from "./booking";
 import {
   HOTEL_ROOM_AMENITY_OPTIONS,
   HOTEL_ROOM_DAMAGE_OPTIONS,
-  calculateFinalPrice,
   generateID,
 } from "./utils";
 import { Hotel, createHotel } from "./hotel";
@@ -1095,7 +1094,7 @@ const generateNumRandomHotelRoomsPerHotel = (
   for (const hotel of hotels) {
     for (let i = 0; i < num; i++) {
       const room_number = Math.floor(Math.random() * 9899) + 100;
-      const initialPrice = Math.floor(Math.random() * 200 * hotel.rating) + 75;
+      const price = Math.floor(Math.random() * 200 * hotel.rating) + 75;
       const damages = Array.from(
         { length: Math.floor(Math.random() * 3) },
         () =>
@@ -1111,12 +1110,6 @@ const generateNumRandomHotelRoomsPerHotel = (
           ]
       ).filter((value, index, self) => self.indexOf(value) === index);
 
-      const finalPrice = calculateFinalPrice(
-        initialPrice,
-        damages,
-        amenities
-      ).toFixed(2);
-
       const extended = Math.random() * 2 > 1;
       const capacity = ["single", "double", "suite"][
         Math.floor(Math.random() * 3)
@@ -1127,7 +1120,7 @@ const generateNumRandomHotelRoomsPerHotel = (
       const randomRoom = {
         room_number,
         hotel_slug: hotel.hotel_slug as string,
-        price: finalPrice,
+        price,
         damages,
         amenities,
         extended,
@@ -1194,11 +1187,13 @@ const generateNumRandomBookingsPerCustomer = (
   for (const customer of customers) {
     for (let i = 0; i < num; i++) {
       const room = rooms[Math.floor(Math.random() * rooms.length)];
-      const currentDate = new Date();
+      const startDate = new Date(
+        new Date().getTime() - 30 * 24 * 60 * 60 * 1000
+      );
       const maxDate = new Date("2026-01-01");
       const check_in = new Date(
-        currentDate.getTime() +
-          Math.random() * (maxDate.getTime() - currentDate.getTime())
+        startDate.getTime() +
+          Math.random() * (maxDate.getTime() - startDate.getTime())
       );
       const check_out = new Date(
         check_in.getTime() +

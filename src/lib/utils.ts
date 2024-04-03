@@ -152,7 +152,7 @@ export const generateID = (): string => {
 export const calculateFinalPrice = (
   initial: number,
   amenities: string[] | number[],
-  damages: string[] | number[]
+  damage: boolean
 ): number => {
   let multiplier = 1.0;
 
@@ -162,12 +162,31 @@ export const calculateFinalPrice = (
     }
   });
 
-  if (damages.length > 0) {
+  if (damage) {
     multiplier -= 0.1;
   }
-
-  return initial * multiplier;
+  return Number((initial * multiplier).toFixed(2));
 };
+
+export const calculateInitialPrice = (
+  final: number,
+  amenities: string[] | number[],
+  damage: boolean
+): number => {
+  let multiplier = 1.0;
+
+  amenities.forEach((amenity, index) => {
+    if (index > 1) {
+      multiplier += 0.05;
+    }
+  });
+
+  if (damage) {
+    multiplier -= 0.1;
+  }
+  return Number((final / multiplier).toFixed(2));
+};
+
 /**
  *
  * @param startDate First date
