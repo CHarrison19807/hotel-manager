@@ -13,7 +13,7 @@ const ViewBookingsPage = async () => {
           columns={BookingColumns}
           data={bookings}
           action={true}
-          actionHref="/bookings/new"
+          actionHref="/admin/bookings/new"
           actionText="Create Booking"
           filter={true}
           filterPlaceholder="Filter by hotel..."

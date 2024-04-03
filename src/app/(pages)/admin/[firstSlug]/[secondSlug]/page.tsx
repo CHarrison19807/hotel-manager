@@ -8,20 +8,17 @@ import { notFound } from "next/navigation";
 
 interface EditHotelProps {
   params: {
-    hotelChainSlug: string;
+    chainSlug: string;
     secondSlug: string;
   };
 }
 
 const EditHotelOrHotelRoomPage = async ({ params }: EditHotelProps) => {
-  const { hotelChainSlug, secondSlug } = params;
+  const { chainSlug, secondSlug } = params;
   const isSecondSlugNumeric = /^\d+$/.test(secondSlug);
   if (isSecondSlugNumeric) {
     const hotels = await getAllHotels();
-    const hotelRoom = await getSingleHotelRoom(
-      hotelChainSlug,
-      parseInt(secondSlug)
-    );
+    const hotelRoom = await getSingleHotelRoom(chainSlug, parseInt(secondSlug));
 
     if (!hotelRoom) {
       notFound();
